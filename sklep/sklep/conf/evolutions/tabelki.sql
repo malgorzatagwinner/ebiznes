@@ -1,0 +1,6 @@
+CREATE TABLE "Directors"(
+  "id" INTEGER PRIMARY KEY,
+  "name" VARCHAR NOT NULL
+);
+
+DROP TABLE "Directors" IF EXISTS;

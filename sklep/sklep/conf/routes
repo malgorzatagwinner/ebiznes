@@ -1,10 +1,59 @@
-# Routes
-# This file defines all application routes (Higher priority routes first)
-# https://www.playframework.com/documentation/latest/ScalaRouting
-# ~~~~
+GET    /api/User                        controllers.UserController.getAll()
+POST   /api/User                        controllers.UserController.create()
+GET    /api/User/$id<[1-9][0-9]*>       controllers.UserController.getById(id: Long)
+PUT    /api/User/$id<[1-9][0-9]*>       controllers.UserController.modifyById(id: Long)
+DELETE /api/User/$id<[1-9][0-9]*>       controllers.UserController.deleteById(id: Long)
 
-# An example controller showing a sample home page
-GET     /                           controllers.HomeController.index()
+GET    /api/Order                        controllers.OrderController.getAll()
+POST   /api/Order                        controllers.OrderController.create()
+GET    /api/Order/$id<[1-9][0-9]*>       controllers.OrderController.getById(id: Long)
+PUT    /api/Order/$id<[1-9][0-9]*>       controllers.OrderController.modifyById(id: Long)
+DELETE /api/Order/$id<[1-9][0-9]*>       controllers.OrderController.deleteById(id: Long)
 
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET    /api/Director                        controllers.DirectorController.getAll()
+POST   /api/Director                        controllers.DirectorController.create()
+GET    /api/Director/$id<[1-9][0-9]*>       controllers.DirectorController.getById(id: Long)
+PUT    /api/Director/$id<[1-9][0-9]*>       controllers.DirectorController.modifyById(id: Long)
+DELETE /api/Director/$id<[1-9][0-9]*>       controllers.DirectorController.deleteById(id: Long)
+
+GET    /api/Actor                        controllers.ActorController.getAll()
+POST   /api/Actor                        controllers.ActorController.create()
+GET    /api/Actor/$id<[1-9][0-9]*>       controllers.ActorController.getById(id: Long)
+PUT    /api/Actor/$id<[1-9][0-9]*>       controllers.ActorController.modifyById(id: Long)
+DELETE /api/Actor/$id<[1-9][0-9]*>       controllers.ActorController.deleteById(id: Long)
+
+GET    /api/Film                        controllers.FilmController.getAll()
+POST   /api/Film                        controllers.FilmController.create()
+GET    /api/Film/$id<[1-9][0-9]*>       controllers.FilmController.getById(id: Long)
+PUT    /api/Film/$id<[1-9][0-9]*>       controllers.FilmController.modifyById(id: Long)
+DELETE /api/Film/$id<[1-9][0-9]*>       controllers.FilmController.deleteById(id: Long)
+
+GET    /api/Favourite                        controllers.FavouriteController.getAll()
+POST   /api/Favourite                        controllers.FavouriteController.create()
+GET    /api/Favourite/$id<[1-9][0-9]*>       controllers.FavouriteController.getById(id: Long)
+PUT    /api/Favourite/$id<[1-9][0-9]*>       controllers.FavouriteController.modifyById(id: Long)
+DELETE /api/Favourite/$id<[1-9][0-9]*>       controllers.FavouriteController.deleteById(id: Long)
+
+GET    /api/Review                        controllers.ReviewController.getAll()
+POST   /api/Review                        controllers.ReviewController.create()
+GET    /api/Review/$id<[1-9][0-9]*>       controllers.ReviewController.getById(id: Long)
+PUT    /api/Review/$id<[1-9][0-9]*>       controllers.ReviewController.modifyById(id: Long)
+DELETE /api/Review/$id<[1-9][0-9]*>       controllers.ReviewController.deleteById(id: Long)
+
+GET    /api/Genre                        controllers.GenreController.getAll()
+POST   /api/Genre                        controllers.GenreController.create()
+GET    /api/Genre/$id<[1-9][0-9]*>       controllers.GenreController.getById(id: Long)
+PUT    /api/Genre/$id<[1-9][0-9]*>       controllers.GenreController.modifyById(id: Long)
+DELETE /api/Genre/$id<[1-9][0-9]*>       controllers.GenreController.deleteById(id: Long)
+
+GET    /api/ShoppingBag                        controllers.ShoppingBagController.getAll()
+POST   /api/ShoppingBag                        controllers.ShoppingBagController.create()
+GET    /api/ShoppingBag/$id<[1-9][0-9]*>       controllers.ShoppingBagController.getById(id: Long)
+PUT    /api/ShoppingBag/$id<[1-9][0-9]*>       controllers.ShoppingBagController.modifyById(id: Long)
+DELETE /api/ShoppingBag/$id<[1-9][0-9]*>       controllers.ShoppingBagController.deleteById(id: Long)
+
+GET    /api/Payment                        controllers.PaymentController.getAll()
+POST   /api/Payment                        controllers.PaymentController.create()
+GET    /api/Payment/$id<[1-9][0-9]*>       controllers.PaymentController.getById(id: Long)
+PUT    /api/Payment/$id<[1-9][0-9]*>       controllers.PaymentController.modifyById(id: Long)
+DELETE /api/Payment/$id<[1-9][0-9]*>       controllers.PaymentController.deleteById(id: Long)
