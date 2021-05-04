@@ -47,7 +47,7 @@ class FilmRepository @Inject() (dbConfigProvider: DatabaseConfigProvider, val ac
   import directorRepository.DirectorsTable
   import genreRepository.GenresTable
   
-  private val films = TableQuery[FilmsTable]
+  val films = TableQuery[FilmsTable]
   val actor_ = TableQuery[ActorsTable]
   val director_ = TableQuery[DirectorsTable]
   val genre_ = TableQuery[GenresTable]
