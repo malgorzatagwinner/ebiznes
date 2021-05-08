@@ -1,9 +1,11 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 WORKDIR /root
 
 VOLUME ["/root/projekt"]
 ENV SBT_VERSION 1.4.9
+ENV DEBIAN_FRONTEND="noninteractive" TZ="Europe/Warsaw"
+
 # install
 RUN apt update && apt install openjdk-8-jdk curl npm -y
 RUN \
