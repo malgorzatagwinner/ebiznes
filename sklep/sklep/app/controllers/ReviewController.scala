@@ -1,13 +1,15 @@
 package controllers
 
+import play.api.data.Forms._
+import play.api.data.Form
 import play.api.libs.json._
 import javax.inject._
 import models.{Review,ReviewData,ReviewRepository}
-import play.api.mvc.{BaseController, Action, ControllerComponents, AnyContent}
+import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ReviewController @Inject()(val repo: ReviewRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
+class ReviewController @Inject()(messagesAction: MessagesActionBuilder, val repo: ReviewRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
 
 
   def getAll = Action.async{
@@ -59,4 +61,30 @@ class ReviewController @Inject()(val repo: ReviewRepository, val controllerCompo
 			}
 		)  
   }
+  
+  def listWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.getAll().map{result => 
+      Ok(views.html.ReviewView(result, form, routes.ReviewController.createWidget))
+    }
+  }
+  
+  def createWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[ReviewData] =>
+      repo.getAll().map{result =>
+        BadRequest(views.html.ReviewView(result, formWithErrors, routes.ReviewController.createWidget))
+      }
+    }
+
+    val successFunction = { data: ReviewData =>
+      val widget = ReviewData(stars = data.stars, txt = data.txt, user_id = data.user_id)
+      Future(Redirect(routes.ReviewController.listWidget).flashing("info" -> "Review added!"))
+    }
+  
+    val formValidationResult = form.bindFromRequest()
+    formValidationResult.fold(errorFunction, successFunction)
+  }
+  val form = Form(mapping("stars" -> number,
+	   		   "txt" -> text,
+	   		   "user_id" -> longNumber)
+  	(ReviewData.apply)(ReviewData.unapply))
 }

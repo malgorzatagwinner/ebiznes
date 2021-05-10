@@ -1,13 +1,15 @@
 package controllers
 
+import play.api.data.Forms._
+import play.api.data.Form
 import play.api.libs.json._
 import javax.inject._
 import models.{ShoppingBag,ShoppingBagData,ShoppingBagRepository}
-import play.api.mvc.{BaseController, Action, ControllerComponents, AnyContent}
+import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ShoppingBagController @Inject()(val repo: ShoppingBagRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
+class ShoppingBagController @Inject()(messagesAction: MessagesActionBuilder, val repo: ShoppingBagRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
 
 
   def getAll = Action.async{
@@ -58,5 +60,30 @@ class ShoppingBagController @Inject()(val repo: ShoppingBagRepository, val contr
 				}
 			}
 		)  
+  }  
+   def listWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.getAll().map{result => 
+      Ok(views.html.ShoppingBagView(result, form, routes.ShoppingBagController.createWidget))
+    }
   }
+  
+  def createWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[ShoppingBagData] =>
+      repo.getAll().map{result =>
+        BadRequest(views.html.ShoppingBagView(result, formWithErrors, routes.ShoppingBagController.createWidget))
+      }
+    }
+
+    val successFunction = { data: ShoppingBagData =>
+      val widget = ShoppingBagData(total_cost = data.total_cost, film_id = data.film_id)
+      Future(Redirect(routes.ShoppingBagController.listWidget).flashing("info" -> "ShoppingBag added!"))
+    }
+  
+    val formValidationResult = form.bindFromRequest()
+    formValidationResult.fold(errorFunction, successFunction)
+  }
+  val form = Form(mapping("total_cost" -> number,
+  			   "film_id" -> longNumber
+  		)(ShoppingBagData.apply)(ShoppingBagData.unapply))
+  
 }

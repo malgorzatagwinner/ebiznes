@@ -1,13 +1,16 @@
 package controllers
 
+import play.api.data.Forms._
+import play.api.data.Form
+import play.api.data.format.Formats._
 import play.api.libs.json._
 import javax.inject._
 import models.{Favourite,FavouriteData,FavouriteRepository}
-import play.api.mvc.{BaseController, Action, ControllerComponents, AnyContent}
+import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FavouriteController @Inject()(val repo: FavouriteRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
+class FavouriteController @Inject()(messagesAction: MessagesActionBuilder, val repo: FavouriteRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
 
 
   def getAll = Action.async{
@@ -59,4 +62,29 @@ class FavouriteController @Inject()(val repo: FavouriteRepository, val controlle
 			}
 		)  
   }
+  
+    def listWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.getAll().map{result => 
+      Ok(views.html.FavouriteView(result, form, routes.FavouriteController.createWidget))
+    }
+  }
+  
+  def createWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[FavouriteData] =>
+      repo.getAll().map{result =>
+        BadRequest(views.html.FavouriteView(result, formWithErrors, routes.FavouriteController.createWidget))
+      }
+    }
+
+    val successFunction = { data: FavouriteData =>
+      val widget = FavouriteData(film_id = data.film_id)
+      Future(Redirect(routes.FavouriteController.listWidget).flashing("info" -> "Favourite added!"))
+    }
+  
+    val formValidationResult = form.bindFromRequest()
+    formValidationResult.fold(errorFunction, successFunction)
+  }
+  
+  val form = Form(mapping("film_id" -> longNumber)(FavouriteData.apply)(FavouriteData.unapply))
+  
 }

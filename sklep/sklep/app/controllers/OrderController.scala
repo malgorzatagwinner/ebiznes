@@ -1,13 +1,15 @@
 package controllers
 
+import play.api.data.Forms._
+import play.api.data.Form
 import play.api.libs.json._
 import javax.inject._
 import models.{Order,OrderData,OrderRepository}
-import play.api.mvc.{BaseController, Action, ControllerComponents, AnyContent}
+import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OrderController @Inject()(val repo: OrderRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
+class OrderController @Inject()(messagesAction: MessagesActionBuilder, val repo: OrderRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
 
 
   def getAll = Action.async{
@@ -59,4 +61,29 @@ class OrderController @Inject()(val repo: OrderRepository, val controllerCompone
 			}
 		)  
   }
+  
+
+  def listWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.getAll().map{result => 
+      Ok(views.html.OrderView(result, form, routes.OrderController.createWidget))
+    }
+  }
+  
+  def createWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[OrderData] =>
+      repo.getAll().map{result =>
+        BadRequest(views.html.OrderView(result, formWithErrors, routes.OrderController.createWidget))
+      }
+    }
+
+    val successFunction = { data: OrderData =>
+      val widget = OrderData(user_id = data.user_id, payment_id = data.payment_id)
+      Future(Redirect(routes.OrderController.listWidget).flashing("info" -> "Order added!"))
+    }
+  
+    val formValidationResult = form.bindFromRequest()
+    formValidationResult.fold(errorFunction, successFunction)
+  }
+  val form = Form(mapping("user_id" -> longNumber,
+  			   "payment_id" -> longNumber)(OrderData.apply)(OrderData.unapply))
 }

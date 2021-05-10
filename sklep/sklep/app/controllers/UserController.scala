@@ -1,13 +1,15 @@
 package controllers
 
+import play.api.data.Forms._
+import play.api.data.Form
 import play.api.libs.json._
 import javax.inject._
 import models.{User,UserData,UserRepository}
-import play.api.mvc.{BaseController, Action, ControllerComponents, AnyContent}
+import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UserController @Inject()(val repo: UserRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
+class UserController @Inject()(messagesAction: MessagesActionBuilder, val repo: UserRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
 
 
   def getAll = Action.async{
@@ -60,4 +62,35 @@ class UserController @Inject()(val repo: UserRepository, val controllerComponent
 			}
 			)  
   }
+  
+  def listWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.getAll().map{result => 
+      Ok(views.html.UserView(result, form, routes.UserController.createWidget))
+    }
+  }
+  
+  def createWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[UserData] =>
+      repo.getAll().map{result =>
+        BadRequest(views.html.UserView(result, formWithErrors, routes.UserController.createWidget))
+      }
+    }
+
+    val successFunction = { data: UserData =>
+      val widget = UserData(email = data.email, password = data.password, surname = data.surname, name = data.name, address = data.address, zipcode = data.zipcode, city = data.city, country = data.country)
+      Future(Redirect(routes.UserController.listWidget).flashing("info" -> "User added!"))
+    }
+  
+    val formValidationResult = form.bindFromRequest()
+    formValidationResult.fold(errorFunction, successFunction)
+  }
+  val form = Form(mapping("email" -> nonEmptyText,
+  			   "password" -> nonEmptyText,
+  			   "surname" -> nonEmptyText,
+  			   "name" -> nonEmptyText,
+  			   "address" -> nonEmptyText,
+  			   "zipcode" -> nonEmptyText,
+  			   "city" -> nonEmptyText,
+  			   "country" -> nonEmptyText
+  			)(UserData.apply)(UserData.unapply))
 }

@@ -1,13 +1,15 @@
 package controllers
 
+import play.api.data.Forms._
+import play.api.data.Form
 import play.api.libs.json._
 import javax.inject._
 import models.{Payment,PaymentData,PaymentRepository}
-import play.api.mvc.{BaseController, Action, ControllerComponents, AnyContent}
+import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentController @Inject()(val repo: PaymentRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
+class PaymentController @Inject()(messagesAction: MessagesActionBuilder, val repo: PaymentRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
 
 
   def getAll = Action.async{
@@ -59,4 +61,29 @@ class PaymentController @Inject()(val repo: PaymentRepository, val controllerCom
 			}
 		)  
   }
+  
+  
+  def listWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.getAll().map{result => 
+      Ok(views.html.PaymentView(result, form, routes.PaymentController.createWidget))
+    }
+  }
+  
+  def createWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[PaymentData] =>
+      repo.getAll().map{result =>
+        BadRequest(views.html.PaymentView(result, formWithErrors, routes.PaymentController.createWidget))
+      }
+    }
+
+    val successFunction = { data: PaymentData =>
+      val widget = PaymentData(user_id = data.user_id, amount = data.amount)
+      Future(Redirect(routes.PaymentController.listWidget).flashing("info" -> "Payment added!"))
+    }
+  
+    val formValidationResult = form.bindFromRequest()
+    formValidationResult.fold(errorFunction, successFunction)
+  }
+  val form = Form(mapping("user_id" -> longNumber,
+  			   "amount" -> number)(PaymentData.apply)(PaymentData.unapply))
 }

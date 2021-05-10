@@ -1,13 +1,15 @@
 package controllers
 
+import play.api.data.Forms._
+import play.api.data.Form
 import play.api.libs.json._
 import javax.inject._
 import models.{Actor,ActorData,ActorRepository}
-import play.api.mvc.{BaseController, Action, ControllerComponents, AnyContent}
+import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ActorController @Inject()(val repo: ActorRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
+class ActorController @Inject()(messagesAction: MessagesActionBuilder, val repo: ActorRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController {
 
 
   def getAll = Action.async{
@@ -59,4 +61,27 @@ class ActorController @Inject()(val repo: ActorRepository, val controllerCompone
 			}
 			)  
   }
+
+  def listWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.getAll().map{result => 
+      Ok(views.html.ActorView(result, form, routes.ActorController.createWidget))
+    }
+  }
+  
+  def createWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[ActorData] =>
+      repo.getAll().map{result =>
+        BadRequest(views.html.ActorView(result, formWithErrors, routes.ActorController.createWidget))
+      }
+    }
+
+    val successFunction = { data: ActorData =>
+      val widget = ActorData(name = data.name)
+      Future(Redirect(routes.ActorController.listWidget).flashing("info" -> "Actor added!"))
+    }
+  
+    val formValidationResult = form.bindFromRequest()
+    formValidationResult.fold(errorFunction, successFunction)
+  }
+  val form = Form(mapping("name" -> nonEmptyText)(ActorData.apply)(ActorData.unapply))
 }

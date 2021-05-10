@@ -1,13 +1,15 @@
 package controllers
 
+import play.api.data.Forms._
+import play.api.data.Form
 import play.api.libs.json._
 import javax.inject._
 import models.{Director,DirectorData,DirectorRepository}
-import play.api.mvc.{BaseController, Action, ControllerComponents, AnyContent}
+import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DirectorController @Inject()(val repo: DirectorRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
+class DirectorController @Inject()(messagesAction: MessagesActionBuilder,val repo: DirectorRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
 
 
   def getAll = Action.async{
@@ -59,4 +61,27 @@ class DirectorController @Inject()(val repo: DirectorRepository, val controllerC
 			}
 		)  
   }
+  
+   def listWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.getAll().map{result => 
+      Ok(views.html.DirectorView(result, form, routes.DirectorController.createWidget))
+    }
+  }
+  
+  def createWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[DirectorData] =>
+      repo.getAll().map{result =>
+        BadRequest(views.html.DirectorView(result, formWithErrors, routes.DirectorController.createWidget))
+      }
+    }
+
+    val successFunction = { data: DirectorData =>
+      val widget = DirectorData(name = data.name)
+      Future(Redirect(routes.DirectorController.listWidget).flashing("info" -> "Director added!"))
+    }
+  
+    val formValidationResult = form.bindFromRequest()
+    formValidationResult.fold(errorFunction, successFunction)
+  }
+  val form = Form(mapping("name" -> nonEmptyText)(DirectorData.apply)(DirectorData.unapply))
 }

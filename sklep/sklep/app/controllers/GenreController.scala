@@ -1,13 +1,15 @@
 package controllers
 
+import play.api.data.Forms._
+import play.api.data.Form
 import play.api.libs.json._
 import javax.inject._
 import models.{Genre,GenreData,GenreRepository}
-import play.api.mvc.{BaseController, Action, ControllerComponents, AnyContent}
+import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class GenreController @Inject()(val repo: GenreRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
+class GenreController @Inject()(messagesAction: MessagesActionBuilder, val repo: GenreRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
 
 
   def getAll = Action.async{
@@ -60,4 +62,28 @@ class GenreController @Inject()(val repo: GenreRepository, val controllerCompone
 			}
 			)  
   }
+  
+  
+  def listWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.getAll().map{result => 
+      Ok(views.html.GenreView(result, form, routes.GenreController.createWidget))
+    }
+  }
+  
+  def createWidget = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[GenreData] =>
+      repo.getAll().map{result =>
+        BadRequest(views.html.GenreView(result, formWithErrors, routes.GenreController.createWidget))
+      }
+    }
+
+    val successFunction = { data: GenreData =>
+      val widget = GenreData(name = data.name)
+      Future(Redirect(routes.GenreController.listWidget).flashing("info" -> "Genre added!"))
+    }
+  
+    val formValidationResult = form.bindFromRequest()
+    formValidationResult.fold(errorFunction, successFunction)
+  }
+  val form = Form(mapping("name" -> nonEmptyText)(GenreData.apply)(GenreData.unapply))
 }
