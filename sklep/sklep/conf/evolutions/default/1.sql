@@ -1,4 +1,4 @@
--- ! Ups
+--! Ups
 CREATE TABLE `Directors`(
   `id` INTEGER PRIMARY KEY,
   `name` VARCHAR NOT NULL
@@ -84,15 +84,15 @@ CREATE TABLE `Reviews`(
     REFERENCES `Users` (`id`)  
 );
 
--- !Downs
+--!Downs
 
-DROP TABLE `Directors` IF EXISTS;
-DROP TABLE `Actors` IF EXISTS;
-DROP TABLE `Genres` IF EXISTS;
-DROP TABLE `Users` IF EXISTS;
-DROP TABLE `Films` IF EXISTS;
-DROP TABLE `Favourites` IF EXISTS;
-DROP TABLE `Payments` IF EXISTS;
-DROP TABLE `Orders` IF EXISTS;
-DROP TABLE `ShoppingBag` IF EXISTS;
-DROP TABLE `Reviews` IF EXISTS;
+DROP TABLE IF EXISTS `Directors`;
+DROP TABLE IF EXISTS `Actors`;
+DROP TABLE IF EXISTS `Genres`;
+DROP TABLE IF EXISTS `Users`;
+DROP TABLE IF EXISTS `Films`;
+DROP TABLE IF EXISTS `Favourites`;
+DROP TABLE IF EXISTS `Payments`;
+DROP TABLE IF EXISTS `Orders`;
+DROP TABLE IF EXISTS `ShoppingBag`;
+DROP TABLE IF EXISTS `Reviews`;

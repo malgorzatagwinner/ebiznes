@@ -11,7 +11,7 @@ object UserData {
   implicit val userDataFormat = Json.format[UserData]
 }
 
-case class User(id: Long = 0L, mail: String, password: String, name: String, surname: String, address: String, zipcode: String, city: String, country: String)
+case class User(id: Long = 0L, email: String, password: String, name: String, surname: String, address: String, zipcode: String, city: String, country: String)
 
 object User {
   implicit val userFormat = Json.format[User]
