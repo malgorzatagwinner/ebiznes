@@ -78,7 +78,9 @@ class OrderController @Inject()(messagesAction: MessagesActionBuilder, val repo:
 
     val successFunction = { data: OrderData =>
       val widget = OrderData(user_id = data.user_id, payment_id = data.payment_id)
-      Future(Redirect(routes.OrderController.listWidget).flashing("info" -> "Order added!"))
+      repo.create(widget).map{ order =>
+      Redirect(routes.OrderController.listWidget).flashing("info" -> "Order added!")
+    }
     }
   
     val formValidationResult = form.bindFromRequest()
@@ -86,4 +88,39 @@ class OrderController @Inject()(messagesAction: MessagesActionBuilder, val repo:
   }
   val form = Form(mapping("user_id" -> longNumber,
   			   "payment_id" -> longNumber)(OrderData.apply)(OrderData.unapply))
+  			   
+  def getWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.getById(id).map{
+      case None =>
+        Redirect(routes.OrderController.listWidget).flashing("error" -> "Not found!")
+      case Some(order) =>
+        val orderData = OrderData(order.user_id, order.payment_id)
+        Ok(views.html.OrderViewUpdate(id, form.fill(orderData)))
+    }
+  }
+  
+  def deleteWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.deleteById(id).map{
+      case 0 =>
+        Redirect(routes.OrderController.listWidget).flashing("error" -> "Not found!")
+      case _ =>
+        Redirect(routes.OrderController.listWidget).flashing("info" -> "Order deleted!")
+    }
+  }
+
+  def updateWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[OrderData] =>
+      repo.getAll().map{result =>
+        BadRequest(views.html.OrderView(result, formWithErrors, routes.OrderController.createWidget))
+      }
+    }
+
+    val successFunction = { data: OrderData =>
+      val widget = OrderData(user_id = data.user_id, payment_id = data.payment_id)
+      repo.modifyById(id, data).map{ a=>
+        Redirect(routes.OrderController.listWidget).flashing("info" -> "Order modified!")
+      }
+    }
+    form.bindFromRequest().fold(errorFunction, successFunction)
+  }
 }

@@ -1,4 +1,4 @@
---! Ups
+--!Ups
 CREATE TABLE `Directors`(
   `id` INTEGER PRIMARY KEY,
   `name` VARCHAR NOT NULL
@@ -62,11 +62,11 @@ CREATE TABLE `Orders`(
   FOREIGN KEY (`user_id`)
     REFERENCES `Users` (`id`),
   FOREIGN KEY (`payment_id`)
-    REFERENCES `Payments` (`id`),
+    REFERENCES `Payments` (`id`)
 );
 
 
-CREATE TABLE `ShoppingBag`(
+CREATE TABLE `ShoppingBags`(
   `id` INTEGER PRIMARY KEY,
   `total_cost` INTEGER,
   `film_id` INTEGER,

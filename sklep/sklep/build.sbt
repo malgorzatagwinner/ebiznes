@@ -14,8 +14,9 @@ libraryDependencies += "com.typesafe.play" %% "play-slick" % "5.0.0"
 libraryDependencies += "com.typesafe.play" %% "play-slick-evolutions" % "5.0.0"
 libraryDependencies += evolutions
 
+
 // Adds additional packages into Twirl
-//TwirlKeys.templateImports += "com.example.controllers._"
+TwirlKeys.templateImports += "views.html.helper._"
 
 // Adds additional packages into conf/routes
 // play.sbt.routes.RoutesKeys.routesImport += "com.example.binders._"

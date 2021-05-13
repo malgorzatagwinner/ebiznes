@@ -79,11 +79,48 @@ class GenreController @Inject()(messagesAction: MessagesActionBuilder, val repo:
 
     val successFunction = { data: GenreData =>
       val widget = GenreData(name = data.name)
-      Future(Redirect(routes.GenreController.listWidget).flashing("info" -> "Genre added!"))
+      repo.create(widget).map{ genre =>
+Redirect(routes.GenreController.listWidget).flashing("info" -> "Genre added!")
+    }
     }
   
     val formValidationResult = form.bindFromRequest()
     formValidationResult.fold(errorFunction, successFunction)
   }
   val form = Form(mapping("name" -> nonEmptyText)(GenreData.apply)(GenreData.unapply))
+  
+  def getWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.getById(id).map{
+      case None =>
+        Redirect(routes.GenreController.listWidget).flashing("error" -> "Not found!")
+      case Some(genre) =>
+        val genreData = GenreData(genre.name)
+        Ok(views.html.GenreViewUpdate(id, form.fill(genreData)))
+    }
+  }
+  
+  def deleteWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.deleteById(id).map{
+      case 0 =>
+        Redirect(routes.GenreController.listWidget).flashing("error" -> "Not found!")
+      case _ =>
+        Redirect(routes.GenreController.listWidget).flashing("info" -> "Genre deleted!")
+    }
+  }
+
+  def updateWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[GenreData] =>
+      repo.getAll().map{result =>
+        BadRequest(views.html.GenreView(result, formWithErrors, routes.GenreController.createWidget))
+      }
+    }
+
+    val successFunction = { data: GenreData =>
+      val widget = GenreData(name = data.name)
+      repo.modifyById(id, data).map{ a=>
+        Redirect(routes.GenreController.listWidget).flashing("info" -> "Genre modified!")
+      }
+    }
+    form.bindFromRequest().fold(errorFunction, successFunction)
+  }
 }

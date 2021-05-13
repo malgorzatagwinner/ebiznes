@@ -1,0 +1,30 @@
+@(id: Long, data: Form[ShoppingBagData])(implicit request: MessagesRequestHeader)
+@main("ShoppingBags") {
+<div class="container">
+	<h1>Edit ShoppingBag @id</h1>
+	@* Flash shows updates to a page *@
+	@request.flash.data.map{ case (name, value) =>
+		<div>@name: @value</div>
+	}
+	@* Global errors are not tied to any particular form field *@
+	@if(data.hasGlobalErrors) {
+		@data.globalErrors.map { error: FormError =>
+			<div>
+				@error.key: @error.message
+			</div>
+		}
+	}
+	@form(routes.ShoppingBagController.updateWidget(id)) {
+		<fieldset>
+			@CSRF.formField
+			@inputText(data("total_cost"), Symbol("_label") -> "total_cost")
+			@inputText(data("film_id"), Symbol("_label") -> "film_id")
+    		  <button>Update ShoppingBag</button>
+		</fieldset>
+	}
+	@*delete(routes.ShoppingBagController.deleteForm(id))*@
+	<a class="button" href="@routes.ShoppingBagController.listWidget()">Back</a>
+</div>
+}
+
+

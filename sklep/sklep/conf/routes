@@ -60,31 +60,60 @@ DELETE /api/payment/$id<[1-9][0-9]*>       controllers.PaymentController.deleteB
 
 GET    /actor                        controllers.ActorController.listWidget()
 POST   /actor                        controllers.ActorController.createWidget()
+POST   /actor/$id<[1-9][0-9]*>      controllers.ActorController.updateWidget(id: Long)
+GET   /actor/$id<[1-9][0-9]*>      controllers.ActorController.getWidget(id: Long)
+GET   /actor/$id<[1-9][0-9]*>/delete      controllers.ActorController.deleteWidget(id: Long)
+
+
 
 GET    /director                        controllers.DirectorController.listWidget()
 POST   /director                        controllers.DirectorController.createWidget()
+POST   /director/$id<[1-9][0-9]*>      controllers.DirectorController.updateWidget(id: Long)
+GET   /director/$id<[1-9][0-9]*>      controllers.DirectorController.getWidget(id: Long)
+GET   /director/$id<[1-9][0-9]*>/delete      controllers.DirectorController.deleteWidget(id: Long)
 
 GET    /favourite                        controllers.FavouriteController.listWidget()
 POST   /favourite                        controllers.FavouriteController.createWidget()
+POST   /favourite/$id<[1-9][0-9]*>      controllers.FavouriteController.updateWidget(id: Long)
+GET   /favourite/$id<[1-9][0-9]*>      controllers.FavouriteController.getWidget(id: Long)
+GET   /favourite/$id<[1-9][0-9]*>/delete      controllers.FavouriteController.deleteWidget(id: Long)
 
 GET    /genre                        controllers.GenreController.listWidget()
 POST   /genre                        controllers.GenreController.createWidget()
+POST   /genre/$id<[1-9][0-9]*>      controllers.GenreController.updateWidget(id: Long)
+GET   /genre/$id<[1-9][0-9]*>      controllers.GenreController.getWidget(id: Long)
+GET   /genre/$id<[1-9][0-9]*>/delete      controllers.GenreController.deleteWidget(id: Long)
 
 GET    /film                        controllers.FilmController.listWidget()
 POST   /film                        controllers.FilmController.createWidget()
+POST   /film/$id<[1-9][0-9]*>      controllers.FilmController.updateWidget(id: Long)
+GET   /film/$id<[1-9][0-9]*>      controllers.FilmController.getWidget(id: Long)
+GET   /film/$id<[1-9][0-9]*>/delete      controllers.FilmController.deleteWidget(id: Long)
 
 GET    /payment                        controllers.PaymentController.listWidget()
 POST   /payment                        controllers.PaymentController.createWidget()
 
 GET    /order                        controllers.OrderController.listWidget()
 POST   /order                        controllers.OrderController.createWidget()
+POST   /order/$id<[1-9][0-9]*>      controllers.OrderController.updateWidget(id: Long)
+GET   /order/$id<[1-9][0-9]*>      controllers.OrderController.getWidget(id: Long)
+GET   /order/$id<[1-9][0-9]*>/delete      controllers.OrderController.deleteWidget(id: Long)
 
 GET    /review                        controllers.ReviewController.listWidget()
 POST   /review                        controllers.ReviewController.createWidget()
+POST   /review/$id<[1-9][0-9]*>      controllers.ReviewController.updateWidget(id: Long)
+GET   /review/$id<[1-9][0-9]*>      controllers.ReviewController.getWidget(id: Long)
+GET   /review/$id<[1-9][0-9]*>/delete      controllers.ReviewController.deleteWidget(id: Long)
 
 GET    /shoppingBag                        controllers.ShoppingBagController.listWidget()
 POST   /shoppingBag                        controllers.ShoppingBagController.createWidget()
+POST   /shoppingBag/$id<[1-9][0-9]*>      controllers.ShoppingBagController.updateWidget(id: Long)
+GET   /shoppingBag/$id<[1-9][0-9]*>      controllers.ShoppingBagController.getWidget(id: Long)
+GET   /shoppingBag/$id<[1-9][0-9]*>/delete      controllers.ShoppingBagController.deleteWidget(id: Long)
 
 
 GET    /user                        controllers.UserController.listWidget()
 POST   /user                        controllers.UserController.createWidget()
+POST   /user/$id<[1-9][0-9]*>      controllers.UserController.updateWidget(id: Long)
+GET   /user/$id<[1-9][0-9]*>      controllers.UserController.getWidget(id: Long)
+GET   /user/$id<[1-9][0-9]*>/delete      controllers.UserController.deleteWidget(id: Long)

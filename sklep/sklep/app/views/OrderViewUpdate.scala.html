@@ -1,0 +1,30 @@
+@(id: Long, data: Form[OrderData])(implicit request: MessagesRequestHeader)
+@main("Orders") {
+<div class="container">
+	<h1>Edit Order @id</h1>
+	@* Flash shows updates to a page *@
+	@request.flash.data.map{ case (name, value) =>
+		<div>@name: @value</div>
+	}
+	@* Global errors are not tied to any particular form field *@
+	@if(data.hasGlobalErrors) {
+		@data.globalErrors.map { error: FormError =>
+			<div>
+				@error.key: @error.message
+			</div>
+		}
+	}
+	@form(routes.OrderController.updateWidget(id)) {
+		<fieldset>
+			@CSRF.formField
+			@inputText(data("user_id"), Symbol("_label") -> "User_id")
+			@inputText(data("payment_id"), Symbol("_label") -> "Payment_id")
+    		  <button>Update Order</button>
+		</fieldset>
+	}
+	@*delete(routes.OrderController.deleteForm(id))*@
+	<a class="button" href="@routes.OrderController.listWidget()">Back</a>
+</div>
+}
+
+

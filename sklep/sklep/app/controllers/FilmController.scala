@@ -77,7 +77,8 @@ class FilmController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
 
     val successFunction = { data: FilmData =>
       val widget = FilmData(name = data.name, genre_id = data.genre_id, director_id = data.director_id, actor_id = data.actor_id)
-      Future(Redirect(routes.FilmController.listWidget).flashing("info" -> "Film added!"))
+      repo.create(widget).map{ film =>Redirect(routes.FilmController.listWidget).flashing("info" -> "Film added!")
+    }
     }
   
     val formValidationResult = form.bindFromRequest()
@@ -88,4 +89,40 @@ class FilmController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
   			   "director_id" -> longNumber,
   			   "actor_id" -> longNumber
   			)(FilmData.apply)(FilmData.unapply))
+
+  def getWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.getById(id).map{
+      case None =>
+        Redirect(routes.FilmController.listWidget).flashing("error" -> "Not found!")
+      case Some(film) =>
+        val filmData = FilmData(film.name, film.genre_id, film.director_id, film.actor_id)
+        Ok(views.html.FilmViewUpdate(id, form.fill(filmData)))
+    }
+  }
+  
+  def deleteWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.deleteById(id).map{
+      case 0 =>
+        Redirect(routes.FilmController.listWidget).flashing("error" -> "Not found!")
+      case _ =>
+        Redirect(routes.FilmController.listWidget).flashing("info" -> "Film deleted!")
+    }
+  }
+
+  def updateWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[FilmData] =>
+      repo.getAll().map{result =>
+        BadRequest(views.html.FilmView(result, formWithErrors, routes.FilmController.createWidget))
+      }
+    }
+
+    val successFunction = { data: FilmData =>
+      val widget = FilmData(data.name, data.genre_id, data.director_id, data.actor_id)
+      repo.modifyById(id, data).map{ a=>
+        Redirect(routes.FilmController.listWidget).flashing("info" -> "Film modified!")
+      }
+    }
+    form.bindFromRequest().fold(errorFunction, successFunction)
+  }
+
 }

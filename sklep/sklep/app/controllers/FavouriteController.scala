@@ -2,7 +2,6 @@ package controllers
 
 import play.api.data.Forms._
 import play.api.data.Form
-import play.api.data.format.Formats._
 import play.api.libs.json._
 import javax.inject._
 import models.{Favourite,FavouriteData,FavouriteRepository}
@@ -78,8 +77,11 @@ class FavouriteController @Inject()(messagesAction: MessagesActionBuilder, val r
 
     val successFunction = { data: FavouriteData =>
       val widget = FavouriteData(film_id = data.film_id)
-      Future(Redirect(routes.FavouriteController.listWidget).flashing("info" -> "Favourite added!"))
+      repo.create(widget).map{ favourite =>
+      	Redirect(routes.FavouriteController.listWidget).flashing("info" -> "Favourite added!")
+      }
     }
+  
   
     val formValidationResult = form.bindFromRequest()
     formValidationResult.fold(errorFunction, successFunction)
@@ -87,4 +89,39 @@ class FavouriteController @Inject()(messagesAction: MessagesActionBuilder, val r
   
   val form = Form(mapping("film_id" -> longNumber)(FavouriteData.apply)(FavouriteData.unapply))
   
+  
+  def getWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.getById(id).map{
+      case None =>
+        Redirect(routes.FavouriteController.listWidget).flashing("error" -> "Not found!")
+      case Some(favourite) =>
+        val favouriteData = FavouriteData(favourite.film_id)
+        Ok(views.html.FavouriteViewUpdate(id, form.fill(favouriteData)))
+    }
+  }
+  
+  def deleteWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.deleteById(id).map{
+      case 0 =>
+        Redirect(routes.FavouriteController.listWidget).flashing("error" -> "Not found!")
+      case _ =>
+        Redirect(routes.FavouriteController.listWidget).flashing("info" -> "Favourite deleted!")
+    }
+  }
+
+  def updateWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[FavouriteData] =>
+      repo.getAll().map{result =>
+        BadRequest(views.html.FavouriteView(result, formWithErrors, routes.FavouriteController.createWidget))
+      }
+    }
+
+    val successFunction = { data: FavouriteData =>
+      val widget = FavouriteData(film_id = data.film_id)
+      repo.modifyById(id, data).map{ a=>
+        Redirect(routes.FavouriteController.listWidget).flashing("info" -> "Favourite modified!")
+      }
+    }
+    form.bindFromRequest().fold(errorFunction, successFunction)
+  }
 }

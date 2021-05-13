@@ -1,0 +1,29 @@
+@(id: Long, data: Form[FavouriteData])(implicit request: MessagesRequestHeader)
+@main("Favourites") {
+<div class="container">
+	<h1>Edit Favourite @id</h1>
+	@* Flash shows updates to a page *@
+	@request.flash.data.map{ case (name, value) =>
+		<div>@name: @value</div>
+	}
+	@* Global errors are not tied to any particular form field *@
+	@if(data.hasGlobalErrors) {
+		@data.globalErrors.map { error: FormError =>
+			<div>
+				@error.key: @error.message
+			</div>
+		}
+	}
+	@form(routes.FavouriteController.updateWidget(id)) {
+		<fieldset>
+			@CSRF.formField
+			@inputText(data("film_id"), Symbol("_label") -> "film_id")
+    		  <button>Update Favourite</button>
+		</fieldset>
+	}
+	@*delete(routes.FavouriteController.deleteForm(id))*@
+	<a class="button" href="@routes.FavouriteController.listWidget()">Back</a>
+</div>
+}
+
+

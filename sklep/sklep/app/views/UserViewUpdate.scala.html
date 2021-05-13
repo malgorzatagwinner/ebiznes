@@ -1,0 +1,36 @@
+@(id: Long, data: Form[UserData])(implicit request: MessagesRequestHeader)
+@main("Users") {
+<div class="container">
+	<h1>Edit User @id</h1>
+	@* Flash shows updates to a page *@
+	@request.flash.data.map{ case (name, value) =>
+		<div>@name: @value</div>
+	}
+	@* Global errors are not tied to any particular form field *@
+	@if(data.hasGlobalErrors) {
+		@data.globalErrors.map { error: FormError =>
+			<div>
+				@error.key: @error.message
+			</div>
+		}
+	}
+	@form(routes.UserController.updateWidget(id)) {
+		<fieldset>
+			@CSRF.formField
+			@inputText(data("email"), Symbol("_label") -> "email")
+			@inputText(data("password"), Symbol("_label") -> "password")
+			@inputText(data("surname"), Symbol("_label") -> "surname")
+			@inputText(data("name"), Symbol("_label") -> "name")
+			@inputText(data("address"), Symbol("_label") -> "address")
+			@inputText(data("zipcode"), Symbol("_label") -> "zipcode")
+			@inputText(data("city"), Symbol("_label") -> "city")
+			@inputText(data("country"), Symbol("_label") -> "country")
+    		  <button>Update User</button>
+		</fieldset>
+	}
+	@*delete(routes.UserController.deleteForm(id))*@
+	<a class="button" href="@routes.UserController.listWidget()">Back</a>
+</div>
+}
+
+

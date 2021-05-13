@@ -15,7 +15,10 @@
       </thead>
       <tbody>
       @for(w <- widgets) {
-        <tr><td>@w.user_id</td><td>@w.payment_id</td></tr>
+        <tr><td>@w.user_id</td><td>@w.payment_id</td>
+          <td><a href="@controllers.routes.OrderController.getWidget(w.id)">edit</a></td>
+          <td><a href="@controllers.routes.OrderController.deleteWidget(w.id)">delete</a></td>
+        </tr>
       }
       </tbody>
     </table>

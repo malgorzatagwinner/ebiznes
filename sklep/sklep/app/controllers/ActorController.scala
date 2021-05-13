@@ -39,8 +39,8 @@ class ActorController @Inject()(messagesAction: MessagesActionBuilder, val repo:
         Future(BadRequest(Json.obj("error" -> JsError.toJson(errors))))
       },
 		actorData => {
-			repo.create(actorData).map{ director=>
-				Ok(s"Stworzono aktora ${director.id}")
+			repo.create(actorData).map{ actor=>
+				Ok(s"Stworzono aktora ${actor.id}")
 			}
 		}
 		)
@@ -77,11 +77,49 @@ class ActorController @Inject()(messagesAction: MessagesActionBuilder, val repo:
 
     val successFunction = { data: ActorData =>
       val widget = ActorData(name = data.name)
-      Future(Redirect(routes.ActorController.listWidget).flashing("info" -> "Actor added!"))
+      repo.create(widget).map{ actor =>
+      	Redirect(routes.ActorController.listWidget).flashing("info" -> "Actor added!")
+      }
     }
   
     val formValidationResult = form.bindFromRequest()
     formValidationResult.fold(errorFunction, successFunction)
   }
   val form = Form(mapping("name" -> nonEmptyText)(ActorData.apply)(ActorData.unapply))
+
+  def getWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.getById(id).map{
+      case None =>
+        Redirect(routes.ActorController.listWidget).flashing("error" -> "Not found!")
+      case Some(actor) =>
+        val actorData = ActorData(actor.name)
+        Ok(views.html.ActorViewUpdate(id, form.fill(actorData)))
+    }
+  }
+  
+  def deleteWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.deleteById(id).map{
+      case 0 =>
+        Redirect(routes.ActorController.listWidget).flashing("error" -> "Not found!")
+      case _ =>
+        Redirect(routes.ActorController.listWidget).flashing("info" -> "Actor deleted!")
+    }
+  }
+
+  def updateWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[ActorData] =>
+      repo.getAll().map{result =>
+        BadRequest(views.html.ActorView(result, formWithErrors, routes.ActorController.createWidget))
+      }
+    }
+
+    val successFunction = { data: ActorData =>
+      val widget = ActorData(name = data.name)
+      repo.modifyById(id, data).map{ a=>
+        Redirect(routes.ActorController.listWidget).flashing("info" -> "Actor modified!")
+      }
+    }
+    form.bindFromRequest().fold(errorFunction, successFunction)
+  }
+
 }

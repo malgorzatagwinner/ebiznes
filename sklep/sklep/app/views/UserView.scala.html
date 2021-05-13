@@ -15,7 +15,10 @@
       </thead>
       <tbody>
       @for(w <- widgets) {
-        <tr><td>@w.email</td><td>@w.password</td><td>@w.surname</td><td>@w.name</td><td>@w.address</td><td>@w.zipcode</td><td>@w.city</td><td>@w.country</td></tr>
+        <tr><td>@w.email</td><td>@w.password</td><td>@w.surname</td><td>@w.name</td><td>@w.address</td><td>@w.zipcode</td><td>@w.city</td><td>@w.country</td>
+          <td><a href="@controllers.routes.UserController.getWidget(w.id)">edit</a></td>
+          <td><a href="@controllers.routes.UserController.deleteWidget(w.id)">delete</a></td>
+        </tr>
       }
       </tbody>
     </table>

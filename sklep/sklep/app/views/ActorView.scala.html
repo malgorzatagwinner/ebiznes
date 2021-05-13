@@ -11,11 +11,15 @@
 
     <table>
       <thead>
-        <tr><th>Name</th>
+        <tr><th>Name</th><th></th><th></th></tr>
       </thead>
       <tbody>
       @for(w <- widgets) {
-        <tr><td>@w.name</td></tr>
+        <tr>
+          <td>@w.name</td>
+          <td><a href="@controllers.routes.ActorController.getWidget(w.id)">edit</a></td>
+          <td><a href="@controllers.routes.ActorController.deleteWidget(w.id)">delete</a></td>
+        </tr>
       }
       </tbody>
     </table>

@@ -1,6 +1,6 @@
 @(widgets: Seq[Favourite], form: Form[FavouriteData], postUrl: Call)(implicit request: MessagesRequestHeader)
 
-  @main("Actors") {
+  @main("Favourites") {
 
     <h1>Widgets</h1>
 
@@ -15,7 +15,10 @@
       </thead>
       <tbody>
       @for(w <- widgets) {
-        <tr><td>@w.film_id</td></tr>
+        <tr><td>@w.film_id</td>
+          <td><a href="@controllers.routes.FavouriteController.getWidget(w.id)">edit</a></td>
+          <td><a href="@controllers.routes.FavouriteController.deleteWidget(w.id)">delete</a></td>
+        </tr>
       }
       </tbody>
     </table>

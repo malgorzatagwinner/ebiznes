@@ -15,7 +15,10 @@
       </thead>
       <tbody>
       @for(w <- widgets) {
-        <tr><td>@w.name</td></tr>
+        <tr><td>@w.name</td>
+            <td><a href="@controllers.routes.DirectorController.getWidget(w.id)">edit</a></td>
+            <td><a href="@controllers.routes.DirectorController.deleteWidget(w.id)">delete</a></td>
+          </tr>
       }
       </tbody>
     </table>

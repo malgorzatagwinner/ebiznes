@@ -1,0 +1,29 @@
+@(id: Long, data: Form[GenreData])(implicit request: MessagesRequestHeader)
+@main("Genres") {
+<div class="container">
+	<h1>Edit Genre @id</h1>
+	@* Flash shows updates to a page *@
+	@request.flash.data.map{ case (name, value) =>
+		<div>@name: @value</div>
+	}
+	@* Global errors are not tied to any particular form field *@
+	@if(data.hasGlobalErrors) {
+		@data.globalErrors.map { error: FormError =>
+			<div>
+				@error.key: @error.message
+			</div>
+		}
+	}
+	@form(routes.GenreController.updateWidget(id)) {
+		<fieldset>
+			@CSRF.formField
+			@inputText(data("name"), Symbol("_label") -> "Name")
+    		  <button>Update Genre</button>
+		</fieldset>
+	}
+	@*delete(routes.GenreController.deleteForm(id))*@
+	<a class="button" href="@routes.GenreController.listWidget()">Back</a>
+</div>
+}
+
+

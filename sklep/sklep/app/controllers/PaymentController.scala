@@ -78,12 +78,15 @@ class PaymentController @Inject()(messagesAction: MessagesActionBuilder, val rep
 
     val successFunction = { data: PaymentData =>
       val widget = PaymentData(user_id = data.user_id, amount = data.amount)
-      Future(Redirect(routes.PaymentController.listWidget).flashing("info" -> "Payment added!"))
+      repo.create(widget).map{ payment => Redirect(routes.PaymentController.listWidget).flashing("info" -> "Payment added!")
+      }
     }
-  
     val formValidationResult = form.bindFromRequest()
     formValidationResult.fold(errorFunction, successFunction)
   }
+  
+
+  
   val form = Form(mapping("user_id" -> longNumber,
   			   "amount" -> number)(PaymentData.apply)(PaymentData.unapply))
 }

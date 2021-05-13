@@ -76,9 +76,9 @@ class ShoppingBagController @Inject()(messagesAction: MessagesActionBuilder, val
 
     val successFunction = { data: ShoppingBagData =>
       val widget = ShoppingBagData(total_cost = data.total_cost, film_id = data.film_id)
-      Future(Redirect(routes.ShoppingBagController.listWidget).flashing("info" -> "ShoppingBag added!"))
+      repo.create(widget).map{ review => Redirect(routes.ShoppingBagController.listWidget).flashing("info" -> "ShoppingBag added!")
     }
-  
+  }
     val formValidationResult = form.bindFromRequest()
     formValidationResult.fold(errorFunction, successFunction)
   }
@@ -86,4 +86,39 @@ class ShoppingBagController @Inject()(messagesAction: MessagesActionBuilder, val
   			   "film_id" -> longNumber
   		)(ShoppingBagData.apply)(ShoppingBagData.unapply))
   
+  def getWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.getById(id).map{
+      case None =>
+        Redirect(routes.ShoppingBagController.listWidget).flashing("error" -> "Not found!")
+      case Some(shoppingBag) =>
+        val shoppingBagData = ShoppingBagData(shoppingBag.total_cost, shoppingBag.film_id)
+        Ok(views.html.ShoppingBagViewUpdate(id, form.fill(shoppingBagData)))
+    }
+  }
+  
+  def deleteWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.deleteById(id).map{
+      case 0 =>
+        Redirect(routes.ShoppingBagController.listWidget).flashing("error" -> "Not found!")
+      case _ =>
+        Redirect(routes.ShoppingBagController.listWidget).flashing("info" -> "ShoppingBag deleted!")
+    }
+  }
+
+  def updateWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[ShoppingBagData] =>
+      repo.getAll().map{result =>
+        BadRequest(views.html.ShoppingBagView(result, formWithErrors, routes.ShoppingBagController.createWidget))
+      }
+    }
+
+    val successFunction = { data: ShoppingBagData =>
+      val widget = ShoppingBagData(total_cost = data.total_cost, film_id = data.film_id)
+      repo.modifyById(id, data).map{ a=>
+        Redirect(routes.ShoppingBagController.listWidget).flashing("info" -> "ShoppingBag modified!")
+      }
+    }
+    form.bindFromRequest().fold(errorFunction, successFunction)
+  }
+
 }

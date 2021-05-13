@@ -15,7 +15,10 @@
       </thead>
       <tbody>
       @for(w <- widgets) {
-        <tr><td>@w.name</td><td>@w.genre_id</td><td>@w.director_id</td><td>@w.actor_id</td></tr>
+        <tr><td>@w.name</td><td>@w.genre_id</td><td>@w.director_id</td><td>@w.actor_id</td>
+          <td><a href="@controllers.routes.FilmController.getWidget(w.id)">edit</a></td>
+          <td><a href="@controllers.routes.FilmController.deleteWidget(w.id)">delete</a></td>
+        </tr>
       }
       </tbody>
     </table>

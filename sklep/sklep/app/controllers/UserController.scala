@@ -78,7 +78,9 @@ class UserController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
 
     val successFunction = { data: UserData =>
       val widget = UserData(email = data.email, password = data.password, surname = data.surname, name = data.name, address = data.address, zipcode = data.zipcode, city = data.city, country = data.country)
-      Future(Redirect(routes.UserController.listWidget).flashing("info" -> "User added!"))
+      repo.create(widget).map{ user =>
+Redirect(routes.UserController.listWidget).flashing("info" -> "User added!")
+    }
     }
   
     val formValidationResult = form.bindFromRequest()
@@ -93,4 +95,40 @@ class UserController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
   			   "city" -> nonEmptyText,
   			   "country" -> nonEmptyText
   			)(UserData.apply)(UserData.unapply))
+
+  def getWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.getById(id).map{
+      case None =>
+        Redirect(routes.UserController.listWidget).flashing("error" -> "Not found!")
+      case Some(user) =>
+        val userData = UserData(user.email, user.password, user.surname, user.name, user.address, user.zipcode, user.city, user.country)
+        Ok(views.html.UserViewUpdate(id, form.fill(userData)))
+    }
+  }
+  
+  def deleteWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.deleteById(id).map{
+      case 0 =>
+        Redirect(routes.UserController.listWidget).flashing("error" -> "Not found!")
+      case _ =>
+        Redirect(routes.UserController.listWidget).flashing("info" -> "User deleted!")
+    }
+  }
+
+  def updateWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[UserData] =>
+      repo.getAll().map{result =>
+        BadRequest(views.html.UserView(result, formWithErrors, routes.UserController.createWidget))
+      }
+    }
+
+    val successFunction = { data: UserData =>
+      val widget = UserData(email = data.email, password = data.password, surname = data.surname, name = data.name, address = data.address, zipcode = data.zipcode, city = data.city, country = data.country)
+      repo.modifyById(id, data).map{ a=>
+        Redirect(routes.UserController.listWidget).flashing("info" -> "User modified!")
+      }
+    }
+    form.bindFromRequest().fold(errorFunction, successFunction)
+  }
+
 }

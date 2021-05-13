@@ -74,14 +74,54 @@ class DirectorController @Inject()(messagesAction: MessagesActionBuilder,val rep
         BadRequest(views.html.DirectorView(result, formWithErrors, routes.DirectorController.createWidget))
       }
     }
+  
+    val successFunction = { data: DirectorData =>
+      val widget = DirectorData(name = data.name)
+       repo.create(widget).map{ director =>
+            Redirect(routes.DirectorController.listWidget).flashing("info" -> "Director added!")
+    }
+    }
+    val formValidationResult = form.bindFromRequest()
+    formValidationResult.fold(errorFunction, successFunction)
+
+  }
+  val form = Form(mapping("name" -> nonEmptyText)(DirectorData.apply)(DirectorData.unapply))
+  
+  def getWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.getById(id).map{
+      case None =>
+        Redirect(routes.DirectorController.listWidget).flashing("error" -> "Not found!")
+      case Some(director) =>
+        val directorData = DirectorData(director.name)
+        Ok(views.html.DirectorViewUpdate(id, form.fill(directorData)))
+    }
+  }
+  
+  def deleteWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    repo.deleteById(id).map{
+      case 0 =>
+        Redirect(routes.DirectorController.listWidget).flashing("error" -> "Not found!")
+      case _ =>
+        Redirect(routes.DirectorController.listWidget).flashing("info" -> "Director deleted!")
+    }
+  }
+
+  def updateWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
+    val errorFunction = { formWithErrors: Form[DirectorData] =>
+      repo.getAll().map{result =>
+        BadRequest(views.html.DirectorView(result, formWithErrors, routes.DirectorController.createWidget))
+      }
+    }
 
     val successFunction = { data: DirectorData =>
       val widget = DirectorData(name = data.name)
-      Future(Redirect(routes.DirectorController.listWidget).flashing("info" -> "Director added!"))
+      repo.modifyById(id, data).map{ a=>
+        Redirect(routes.DirectorController.listWidget).flashing("info" -> "Director modified!")
+      }
     }
-  
-    val formValidationResult = form.bindFromRequest()
-    formValidationResult.fold(errorFunction, successFunction)
+    form.bindFromRequest().fold(errorFunction, successFunction)
   }
-  val form = Form(mapping("name" -> nonEmptyText)(DirectorData.apply)(DirectorData.unapply))
+
+  
+  
 }

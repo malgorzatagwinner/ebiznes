@@ -1,0 +1,32 @@
+@(id: Long, data: Form[FilmData])(implicit request: MessagesRequestHeader)
+@main("Films") {
+<div class="container">
+	<h1>Edit Film @id</h1>
+	@* Flash shows updates to a page *@
+	@request.flash.data.map{ case (name, value) =>
+		<div>@name: @value</div>
+	}
+	@* Global errors are not tied to any particular form field *@
+	@if(data.hasGlobalErrors) {
+		@data.globalErrors.map { error: FormError =>
+			<div>
+				@error.key: @error.message
+			</div>
+		}
+	}
+	@form(routes.FilmController.updateWidget(id)) {
+		<fieldset>
+			@CSRF.formField
+			@inputText(data("name"), Symbol("_label") -> "Name")
+			@inputText(data("genre"), Symbol("_label") -> "Genre")
+			@inputText(data("director"), Symbol("_label") -> "Director")
+			@inputText(data("actor"), Symbol("_label") -> "Actor")
+    		  <button>Update Film</button>
+		</fieldset>
+	}
+	@*delete(routes.FilmController.deleteForm(id))*@
+	<a class="button" href="@routes.FilmController.listWidget()">Back</a>
+</div>
+}
+
+
