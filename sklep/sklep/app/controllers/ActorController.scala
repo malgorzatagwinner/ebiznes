@@ -29,7 +29,7 @@ class ActorController @Inject()(messagesAction: MessagesActionBuilder, val repo:
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
     	case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    	case _ => Ok(s"Usunięto aktora ${id}")
+    	case _ => Ok(Json.obj("status"->s"Usunięto aktora ${id}"))
     }
   }
   def create()= Action(parse.json).async{
@@ -40,7 +40,7 @@ class ActorController @Inject()(messagesAction: MessagesActionBuilder, val repo:
       },
 		actorData => {
 			repo.create(actorData).map{ actor=>
-				Ok(s"Stworzono aktora ${actor.id}")
+				Ok(Json.obj("status"->s"Stworzono aktora ${actor.id}"))
 			}
 		}
 		)
@@ -56,7 +56,7 @@ class ActorController @Inject()(messagesAction: MessagesActionBuilder, val repo:
     	actorData =>{
     		repo.modifyById(id, actorData).map{
     			case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    			case _ => Ok(s"Zmodyfikowano aktora ${id}")
+    			case _ => Ok(Json.obj("status"->s"Zmodyfikowano aktora ${id}"))
 				}
 			}
 			)  

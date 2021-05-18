@@ -29,7 +29,7 @@ class GenreController @Inject()(messagesAction: MessagesActionBuilder, val repo:
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
     	case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    	case _ => Ok(s"Usunięto rodzaj ${id}")
+    	case _ => Ok(Json.obj("status"->s"Usunięto rodzaj ${id}"))
     }
   }
   
@@ -41,7 +41,7 @@ class GenreController @Inject()(messagesAction: MessagesActionBuilder, val repo:
       },
 		genreData => {
 			repo.create(genreData).map{ genre=>
-				Ok(s"Stworzono rodzaj ${genre.id}")
+				Ok(Json.obj("status"->s"Stworzono rodzaj ${genre.id}"))
 			}
 		}
 		)
@@ -57,7 +57,7 @@ class GenreController @Inject()(messagesAction: MessagesActionBuilder, val repo:
     	genreData =>{
     		repo.modifyById(id, genreData).map{
     			case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    			case _ => Ok(s"Zmodyfikowano rodzaj ${id}")
+    			case _ => Ok(Json.obj("status"->s"Zmodyfikowano rodzaj ${id}"))
 				}
 			}
 			)  

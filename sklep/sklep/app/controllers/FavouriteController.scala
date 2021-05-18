@@ -29,7 +29,7 @@ class FavouriteController @Inject()(messagesAction: MessagesActionBuilder, val r
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
     	case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    	case _ => Ok(s"Usunięto ulubieńca ${id}")
+    	case _ => Ok(Json.obj("status"->s"Usunięto ulubieńca ${id}"))
     }
   }
   def create()= Action(parse.json).async{
@@ -40,7 +40,7 @@ class FavouriteController @Inject()(messagesAction: MessagesActionBuilder, val r
       },
 		FavouriteData => {
 			repo.create(FavouriteData).map{ favourite=>
-				Ok(s"Stworzono ulubieńca ${favourite.id}")
+				Ok(Json.obj("status"->s"Stworzono ulubieńca ${favourite.id}"))
 			}
 		}
 		)
@@ -56,7 +56,7 @@ class FavouriteController @Inject()(messagesAction: MessagesActionBuilder, val r
     	FavouriteData =>{
     		repo.modifyById(id, FavouriteData).map{
     			case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    			case _ => Ok(s"Zmodyfikowano ulubieńca ${id}")
+    			case _ => Ok(Json.obj("status"->s"Zmodyfikowano ulubieńca ${id}"))
 				}
 			}
 		)  

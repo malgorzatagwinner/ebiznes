@@ -29,7 +29,7 @@ class PaymentController @Inject()(messagesAction: MessagesActionBuilder, val rep
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
     	case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    	case _ => Ok(s"Usunięto płatność ${id}")
+    	case _ => Ok(Json.obj("status"->s"Usunięto płatność ${id}"))
     }
   }
   def create()= Action(parse.json).async{
@@ -40,7 +40,7 @@ class PaymentController @Inject()(messagesAction: MessagesActionBuilder, val rep
       },
 		paymentData => {
 			repo.create(paymentData).map{ Payment=>
-				Ok(s"Stworzono płatność ${Payment.id}")
+				Ok(Json.obj("status"->s"Stworzono płatność ${Payment.id}"))
 			}
 		}
 		)
@@ -56,7 +56,7 @@ class PaymentController @Inject()(messagesAction: MessagesActionBuilder, val rep
     	paymentData =>{
     		repo.modifyById(id, paymentData).map{
     			case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    			case _ => Ok(s"Zmodyfikowano płatność ${id}")
+    			case _ => Ok(Json.obj("status"->s"Zmodyfikowano płatność ${id}"))
 				}
 			}
 		)  

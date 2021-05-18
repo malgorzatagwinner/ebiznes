@@ -29,7 +29,7 @@ class DirectorController @Inject()(messagesAction: MessagesActionBuilder,val rep
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
     	case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    	case _ => Ok(s"Usunięto reżysera ${id}")
+    	case _ => Ok(Json.obj("status"->s"Usunięto reżysera ${id}"))
     }
   }
   def create()= Action(parse.json).async{
@@ -40,7 +40,7 @@ class DirectorController @Inject()(messagesAction: MessagesActionBuilder,val rep
       },
 		directorData => {
 			repo.create(directorData).map{ director=>
-				Ok(s"Stworzono reżysera ${director.id}")
+				Ok(Json.obj("status"->s"Stworzono reżysera ${director.id}"))
 			}
 		}
 		)
@@ -56,7 +56,7 @@ class DirectorController @Inject()(messagesAction: MessagesActionBuilder,val rep
     	directorData =>{
     		repo.modifyById(id, directorData).map{
     			case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    			case _ => Ok(s"Zmodyfikowano reżysera ${id}")
+    			case _ => Ok(Json.obj("status"->s"Zmodyfikowano reżysera ${id}"))
 				}
 			}
 		)  

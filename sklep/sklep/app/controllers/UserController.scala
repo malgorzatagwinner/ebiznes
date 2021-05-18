@@ -29,7 +29,7 @@ class UserController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
     	case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    	case _ => Ok(s"Usunięto reżysera ${id}")
+    	case _ => Ok(Json.obj("status"->s"Usunięto reżysera ${id}"))
     }
   }
   
@@ -41,7 +41,7 @@ class UserController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
       },
 		UserData => {
 			repo.create(UserData).map{ User=>
-				Ok(s"Stworzono reżysera ${User.id}")
+				Ok(Json.obj("status"->s"Stworzono reżysera ${User.id}"))
 			}
 		}
 		)
@@ -57,7 +57,7 @@ class UserController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
     	UserData =>{
     		repo.modifyById(id, UserData).map{
     			case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    			case _ => Ok(s"Zmodyfikowano reżysera ${id}")
+    			case _ => Ok(Json.obj("status"->s"Zmodyfikowano reżysera ${id}"))
 				}
 			}
 			)  

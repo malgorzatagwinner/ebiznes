@@ -29,7 +29,7 @@ class FilmController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
     	case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    	case _ => Ok(s"Usunięto film ${id}")
+    	case _ => Ok(Json.obj("status"->s"Usunięto film ${id}"))
     }
   }
   def create()= Action(parse.json).async{
@@ -40,7 +40,7 @@ class FilmController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
       },
 		FilmData => {
 			repo.create(FilmData).map{ Film=>
-				Ok(s"Stworzono film ${Film.id}")
+				Ok(Json.obj("status"->s"Stworzono film ${Film.id}"))
 			}
 		}
 		)
@@ -56,7 +56,7 @@ class FilmController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
     	filmData =>{
     		repo.modifyById(id, filmData).map{
     			case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    			case _ => Ok(s"Zmodyfikowano film ${id}")
+    			case _ => Ok(Json.obj("status"->s"Zmodyfikowano film ${id}"))
 				}
 			}
 		)  

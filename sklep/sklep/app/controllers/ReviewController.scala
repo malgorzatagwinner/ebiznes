@@ -29,7 +29,7 @@ class ReviewController @Inject()(messagesAction: MessagesActionBuilder, val repo
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
     	case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    	case _ => Ok(s"Usunięto recenzję ${id}")
+    	case _ => Ok(Json.obj("status"->s"Usunięto recenzję ${id}"))
     }
   }
   def create()= Action(parse.json).async{
@@ -40,7 +40,7 @@ class ReviewController @Inject()(messagesAction: MessagesActionBuilder, val repo
       },
 		ReviewData => {
 			repo.create(ReviewData).map{ Review=>
-				Ok(s"Stworzono recenzję ${Review.id}")
+				Ok(Json.obj("status"->s"Stworzono recenzję ${Review.id}"))
 			}
 		}
 		)
@@ -56,7 +56,7 @@ class ReviewController @Inject()(messagesAction: MessagesActionBuilder, val repo
     	ReviewData =>{
     		repo.modifyById(id, ReviewData).map{
     			case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    			case _ => Ok(s"Zmodyfikowano recenzję ${id}")
+    			case _ => Ok(Json.obj("status"->s"Zmodyfikowano recenzję ${id}"))
 				}
 			}
 		)  

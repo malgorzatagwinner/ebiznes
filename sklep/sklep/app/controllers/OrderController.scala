@@ -29,7 +29,7 @@ class OrderController @Inject()(messagesAction: MessagesActionBuilder, val repo:
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
     	case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    	case _ => Ok(s"Usunięto zamowienie ${id}")
+    	case _ => Ok(Json.obj("status"->s"Usunięto zamowienie ${id}"))
     }
   }
   def create()= Action(parse.json).async{
@@ -40,7 +40,7 @@ class OrderController @Inject()(messagesAction: MessagesActionBuilder, val repo:
       },
 		orderData => {
 			repo.create(orderData).map{ order=>
-				Ok(s"Stworzono zamowienie ${order.id}")
+				Ok(Json.obj("status"->s"Stworzono zamowienie ${order.id}"))
 			}
 		}
 		)
@@ -56,7 +56,7 @@ class OrderController @Inject()(messagesAction: MessagesActionBuilder, val repo:
     	orderData =>{
     		repo.modifyById(id, orderData).map{
     			case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    			case _ => Ok(s"Zmodyfikowano zamówienie ${id}")
+    			case _ => Ok(Json.obj("status"->s"Zmodyfikowano zamówienie ${id}"))
 				}
 			}
 		)  

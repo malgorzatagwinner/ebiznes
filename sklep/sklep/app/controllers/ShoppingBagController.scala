@@ -29,7 +29,7 @@ class ShoppingBagController @Inject()(messagesAction: MessagesActionBuilder, val
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
     	case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    	case _ => Ok(s"Usunięto koszyk ${id}")
+    	case _ => Ok(Json.obj("status"->s"Usunięto koszyk ${id}"))
     }
   }
   def create()= Action(parse.json).async{
@@ -40,7 +40,7 @@ class ShoppingBagController @Inject()(messagesAction: MessagesActionBuilder, val
       },
 		shoppingBagData => {
 			repo.create(shoppingBagData).map{ shoppingBag=>
-				Ok(s"Stworzono koszyk ${shoppingBag.id}")
+				Ok(Json.obj("status"->s"Stworzono koszyk ${shoppingBag.id}"))
 			}
 		}
 		)
@@ -56,7 +56,7 @@ class ShoppingBagController @Inject()(messagesAction: MessagesActionBuilder, val
     	shoppingBagData =>{
     		repo.modifyById(id, shoppingBagData).map{
     			case 0 => NotFound(Json.obj("error" -> "Not Found"))
-    			case _ => Ok(s"Zmodyfikowano koszyk ${id}")
+    			case _ => Ok(Json.obj("status"->s"Zmodyfikowano koszyk ${id}"))
 				}
 			}
 		)  
