@@ -43,8 +43,11 @@ CREATE TABLE `Films`(
 CREATE TABLE `Favourites`(
   `id` INTEGER PRIMARY KEY,
   `film_id` INTEGER NOT NULL,
+  `user_id` INTEGER NOT NULL,
   FOREIGN KEY (`film_id`)
-    REFERENCES `Films` (`id`)
+    REFERENCES `Films` (`id`),
+     FOREIGN KEY (`user_id`)
+    REFERENCES `Users` (`id`)
 );
 
 CREATE TABLE `Payments`(
@@ -80,8 +83,11 @@ CREATE TABLE `Reviews`(
   `stars` INTEGER NOT NULL,
   `txt` VARCHAR,
   `user_id` INTEGER NOT NULL,
+  `film_id` INTEGER NOT NULL,
    FOREIGN KEY (`user_id`)
-    REFERENCES `Users` (`id`)  
+    REFERENCES `Users` (`id`),  
+   FOREIGN KEY (`film_id`)
+    REFERENCES `Films` (`id`) 
 );
 
 --!Downs

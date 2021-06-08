@@ -18,8 +18,9 @@
 		<fieldset>
 			@CSRF.formField
 			@inputText(data("stars"), Symbol("_label") -> "Stars")
-			@inputText(data("txt"), Symbol("_label") -> "Stars")
+			@inputText(data("txt"), Symbol("_label") -> "txt")
 			@inputText(data("user_id"), Symbol("_label") -> "user_id")
+			@inputText(data("film_id"), Symbol("_label") -> "film_id")
     		  <button>Update Review</button>
 		</fieldset>
 	}

@@ -2,8 +2,12 @@ import logo from './logo.svg';
 import './App.css';
 import {BrowserRouter, Link, Route, Switch} from 'react-router-dom';
 import {StoreProvider} from './ProductsContext'
+import {UserProvider} from './UserContext'
 import ProductList from './ProductList'
 import Product from './Product'
+import Header from './links'
+import Welcome from './hello'
+import FavouriteList from './FavouriteList'
 
 const NotFound = () => (
 		<h1>Not Found</h1>
@@ -23,14 +27,16 @@ export default function App() {
   <div className="App">
     <div>
       <StoreProvider>
+      <UserProvider>
 	<BrowserRouter>
-	  <ul>
-	    <li><Link to ="/products">Products</Link> </li>
-	  </ul>
+	  <Header/>
 	  <CustomSwitch>
 		  <Route path="/products" component={ProductList}/>
+		  <Route path="/favourites" component={FavouriteList}/>
+		  <Route path="/" component={Welcome}/>
 	  </CustomSwitch>
 	</BrowserRouter>
+      </UserProvider>
       </StoreProvider>
       </div>
     </div>

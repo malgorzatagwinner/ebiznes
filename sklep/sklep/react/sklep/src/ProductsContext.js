@@ -8,9 +8,10 @@ const endpoint = 'http://localhost:9000/api';
 const states ={
 	films: {},
 	directors: {},
-	genre: {}
+	genre: {},
+	reviews: {}
 };
-
+let loading = false;
 const reducer = (state, action) => {
 	switch (action.type){
 		case 'setFilms':{
@@ -24,6 +25,10 @@ const reducer = (state, action) => {
 		case 'setGenres':{
 			console.log('setGenres to ', action.data);
 			return {...state, genres: action.data || {}};
+		}
+		case 'setReviews':{
+			console.log('setReviews to ', action.data);
+			return {...state, reviews: action.data || {}};
 		}
 		default: {
 			throw new Error(`Unhandled action type: ${action.type}`)
@@ -39,7 +44,18 @@ const loadToMap = async (baseUrl, url) => {
 		return map;
 	}, {});
 };
-
+const loadToMap_Film = async (baseUrl, url) => {
+	const all = await getRequest(`${baseUrl}/${url}`);
+	return all.reduce((map, elem) => {
+		if (map[elem.film_id]){
+			map[elem.film_id].push(elem);
+		}
+		else{
+			map[elem.film_id]=[elem];
+		}
+		return map;
+	}, {});
+};
 
 export const StoreProvider = ({children}) => {
 	const [store, storeDispatch] = React.useReducer(reducer, states);
@@ -50,6 +66,7 @@ export const StoreProvider = ({children}) => {
 				customDispatch({type: 'loadFilms'});
 				customDispatch({type: 'loadDirectors'});
 				customDispatch({type: 'loadGenres'});
+				customDispatch({type: 'loadReviews'});
 				
 				return;
 			}
@@ -63,6 +80,10 @@ export const StoreProvider = ({children}) => {
 			}
 			case "loadGenres": {
 				loadToMap(endpoint, 'genre').then((data) => storeDispatch({type: 'setGenres', data}));
+				return;
+			}
+			case "loadReviews": {
+				loadToMap_Film(endpoint, 'review').then((data) => storeDispatch({type: 'setReviews', data}));
 				return;
 			}
 			default: {
@@ -83,7 +104,8 @@ export const useStore = () => {
 	if (context === undefined) {
 		throw new Error('useStore must be used within a StoreContext');
 	}
-	if (context[0] == states) {
+	if (!loading && context[0] == states) {
+		loading = true;
 		context[1]({type: 'loadAll'});
 	}
 	return context;

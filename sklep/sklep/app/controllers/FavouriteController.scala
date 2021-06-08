@@ -76,7 +76,7 @@ class FavouriteController @Inject()(messagesAction: MessagesActionBuilder, val r
     }
 
     val successFunction = { data: FavouriteData =>
-      val widget = FavouriteData(film_id = data.film_id)
+      val widget = FavouriteData(film_id = data.film_id, user_id = data.user_id)
       repo.create(widget).map{ favourite =>
       	Redirect(routes.FavouriteController.listWidget).flashing("info" -> "Favourite added!")
       }
@@ -87,7 +87,7 @@ class FavouriteController @Inject()(messagesAction: MessagesActionBuilder, val r
     formValidationResult.fold(errorFunction, successFunction)
   }
   
-  val form = Form(mapping("film_id" -> longNumber)(FavouriteData.apply)(FavouriteData.unapply))
+  val form = Form(mapping("film_id" -> longNumber, "user_id" -> longNumber)(FavouriteData.apply)(FavouriteData.unapply))
   
   
   def getWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
@@ -95,7 +95,7 @@ class FavouriteController @Inject()(messagesAction: MessagesActionBuilder, val r
       case None =>
         Redirect(routes.FavouriteController.listWidget).flashing("error" -> "Not found!")
       case Some(favourite) =>
-        val favouriteData = FavouriteData(favourite.film_id)
+        val favouriteData = FavouriteData(favourite.film_id, favourite.user_id)
         Ok(views.html.FavouriteViewUpdate(id, form.fill(favouriteData)))
     }
   }
@@ -117,7 +117,7 @@ class FavouriteController @Inject()(messagesAction: MessagesActionBuilder, val r
     }
 
     val successFunction = { data: FavouriteData =>
-      val widget = FavouriteData(film_id = data.film_id)
+      val widget = FavouriteData(film_id = data.film_id, user_id = data.user_id)
       repo.modifyById(id, data).map{ a=>
         Redirect(routes.FavouriteController.listWidget).flashing("info" -> "Favourite modified!")
       }

@@ -76,7 +76,7 @@ class ReviewController @Inject()(messagesAction: MessagesActionBuilder, val repo
     }
 
     val successFunction = { data: ReviewData =>
-      val widget = ReviewData(stars = data.stars, txt = data.txt, user_id = data.user_id)
+      val widget = ReviewData(stars = data.stars, txt = data.txt, user_id = data.user_id, film_id = data.film_id)
       repo.create(widget).map{ review => Redirect(routes.ReviewController.listWidget).flashing("info" -> "Review added!")
     }
   }
@@ -86,7 +86,8 @@ class ReviewController @Inject()(messagesAction: MessagesActionBuilder, val repo
   
   val form = Form(mapping("stars" -> number,
 	   		   "txt" -> text,
-	   		   "user_id" -> longNumber)
+	   		   "user_id" -> longNumber,
+	   		   "film_id" -> longNumber)
   	(ReviewData.apply)(ReviewData.unapply))
   	
   def getWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
@@ -94,7 +95,7 @@ class ReviewController @Inject()(messagesAction: MessagesActionBuilder, val repo
       case None =>
         Redirect(routes.ReviewController.listWidget).flashing("error" -> "Not found!")
       case Some(review) =>
-        val reviewData = ReviewData(review.stars, review.txt, review.user_id)
+        val reviewData = ReviewData(review.stars, review.txt, review.user_id, review.film_id)
         Ok(views.html.ReviewViewUpdate(id, form.fill(reviewData)))
     }
   }
@@ -116,7 +117,7 @@ class ReviewController @Inject()(messagesAction: MessagesActionBuilder, val repo
     }
 
     val successFunction = { data: ReviewData =>
-      val widget = ReviewData(stars = data.stars, txt = data.txt, user_id = data.user_id)
+      val widget = ReviewData(stars = data.stars, txt = data.txt, user_id = data.user_id, film_id = data.film_id)
       repo.modifyById(id, data).map{ a=>
         Redirect(routes.ReviewController.listWidget).flashing("info" -> "Review modified!")
       }

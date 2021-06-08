@@ -15,7 +15,7 @@
       </thead>
       <tbody>
       @for(w <- widgets) {
-        <tr><td>@w.stars</td><td>@w.txt</td><td>@w.user_id</td>
+        <tr><td>@w.stars</td><td>@w.txt</td><td>@w.user_id</td><td>@w.film_id</td>
           <td><a href="@controllers.routes.ReviewController.getWidget(w.id)">edit</a></td>
           <td><a href="@controllers.routes.ReviewController.deleteWidget(w.id)">delete</a></td></tr>
       }
@@ -39,6 +39,7 @@
       @helper.inputText(form("stars"))
       @helper.inputText(form("txt"))
       @helper.inputText(form("user_id"))
+      @helper.inputText(form("film_id"))
 
       <button>Create widget</button>
     }

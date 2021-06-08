@@ -3,20 +3,25 @@ import { useStore } from './ProductsContext';
 import { useUser } from './UserContext';
 
 export default () => {
+	const [user, userDispatch] = useUser();
+	const { favourites} = user;
 	const [store, storeDispatch] = useStore();
 	const { films, directors, genres, reviews } = store;
-
-	const[user, userDispatch] = useUser();
 
 	const addtoBag = (id) => {
 		userDispatch({type: 'addFilmtoBag', film:id});
 	}
 	
+	
 	return (<ul>
 		{
-			Object.values(films).map((film) => (
-				<li key={ film.id }>
-					{
+			Object.values(favourites).map((favourite) => {
+			if(!favourite)
+				return;
+			const film = films[favourite.film_id]
+			return (
+			<li key={favourite.id}>
+				{
 						film.id
 					}. {
 						film.name
@@ -33,8 +38,8 @@ export default () => {
 						<a onClick={() => addtoBag(film.id)}>
 						Add to Shopping Bag
 						</a>
-				</li>
-			))
+			</li>
+			)})
 		}
 	</ul>);
 };
