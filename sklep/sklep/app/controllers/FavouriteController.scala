@@ -11,7 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class FavouriteController @Inject()(messagesAction: MessagesActionBuilder, val repo: FavouriteRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
 
-
+val nf = "Not Found"
   def getAll = Action.async{
     repo.getAll().map { Favourites =>
     Ok(Json.toJson(Favourites))
@@ -20,7 +20,7 @@ class FavouriteController @Inject()(messagesAction: MessagesActionBuilder, val r
   def getById(id: Long) = Action.async{
     repo.getById(id).map{ Favourite =>
     if (Favourite == None)
-    	NotFound(Json.obj("error" -> "Not Found"))
+    	NotFound(Json.obj("error" -> nf))
     else
     	Ok(Json.toJson(Favourite))
   	}
@@ -28,7 +28,7 @@ class FavouriteController @Inject()(messagesAction: MessagesActionBuilder, val r
   
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
-    	case 0 => NotFound(Json.obj("error" -> "Not Found"))
+    	case 0 => NotFound(Json.obj("error" -> nf))
     	case _ => Ok(Json.obj("status"->s"Usunięto ulubieńca ${id}"))
     }
   }
@@ -55,7 +55,7 @@ class FavouriteController @Inject()(messagesAction: MessagesActionBuilder, val r
     	},
     	FavouriteData =>{
     		repo.modifyById(id, FavouriteData).map{
-    			case 0 => NotFound(Json.obj("error" -> "Not Found"))
+    			case 0 => NotFound(Json.obj("error" -> nf))
     			case _ => Ok(Json.obj("status"->s"Zmodyfikowano ulubieńca ${id}"))
 				}
 			}
@@ -103,7 +103,7 @@ class FavouriteController @Inject()(messagesAction: MessagesActionBuilder, val r
   def deleteWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
     repo.deleteById(id).map{
       case 0 =>
-        Redirect(routes.FavouriteController.listWidget).flashing("error" -> "Not found!")
+        Redirect(routes.FavouriteController.listWidget).flashing("error" -> nf)
       case _ =>
         Redirect(routes.FavouriteController.listWidget).flashing("info" -> "Favourite deleted!")
     }

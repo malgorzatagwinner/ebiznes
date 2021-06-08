@@ -11,6 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ShoppingBagController @Inject()(messagesAction: MessagesActionBuilder, val repo: ShoppingBagRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
 
+val nf = "Not Found"
 
   def getAll = Action.async{
     repo.getAll().map { ShoppingBags =>
@@ -28,7 +29,7 @@ class ShoppingBagController @Inject()(messagesAction: MessagesActionBuilder, val
   
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
-    	case 0 => NotFound(Json.obj("error" -> "Not Found"))
+    	case 0 => NotFound(Json.obj("error" -> nf))
     	case _ => Ok(Json.obj("status"->s"Usunięto koszyk ${id}"))
     }
   }
@@ -55,7 +56,7 @@ class ShoppingBagController @Inject()(messagesAction: MessagesActionBuilder, val
     	},
     	shoppingBagData =>{
     		repo.modifyById(id, shoppingBagData).map{
-    			case 0 => NotFound(Json.obj("error" -> "Not Found"))
+    			case 0 => NotFound(Json.obj("error" -> nf))
     			case _ => Ok(Json.obj("status"->s"Zmodyfikowano koszyk ${id}"))
 				}
 			}
@@ -89,7 +90,7 @@ class ShoppingBagController @Inject()(messagesAction: MessagesActionBuilder, val
   def getWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
     repo.getById(id).map{
       case None =>
-        Redirect(routes.ShoppingBagController.listWidget).flashing("error" -> "Not found!")
+        Redirect(routes.ShoppingBagController.listWidget).flashing("error" -> nf)
       case Some(shoppingBag) =>
         val shoppingBagData = ShoppingBagData(shoppingBag.total_cost, shoppingBag.film_id)
         Ok(views.html.ShoppingBagViewUpdate(id, form.fill(shoppingBagData)))
@@ -99,7 +100,7 @@ class ShoppingBagController @Inject()(messagesAction: MessagesActionBuilder, val
   def deleteWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
     repo.deleteById(id).map{
       case 0 =>
-        Redirect(routes.ShoppingBagController.listWidget).flashing("error" -> "Not found!")
+        Redirect(routes.ShoppingBagController.listWidget).flashing("error" -> nf)
       case _ =>
         Redirect(routes.ShoppingBagController.listWidget).flashing("info" -> "ShoppingBag deleted!")
     }

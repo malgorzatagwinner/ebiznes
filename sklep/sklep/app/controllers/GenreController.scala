@@ -11,6 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class GenreController @Inject()(messagesAction: MessagesActionBuilder, val repo: GenreRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
 
+val nf = "Not Found"
 
   def getAll = Action.async{
     repo.getAll().map { genres =>
@@ -20,7 +21,7 @@ class GenreController @Inject()(messagesAction: MessagesActionBuilder, val repo:
   def getById(id: Long) = Action.async{
     repo.getById(id).map{ genre =>
     if (genre == None)
-    	NotFound(Json.obj("error" -> "Not Found"))
+    	NotFound(Json.obj("error" -> nf))
     else
     	Ok(Json.toJson(genre))
   	}
@@ -28,7 +29,7 @@ class GenreController @Inject()(messagesAction: MessagesActionBuilder, val repo:
   
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
-    	case 0 => NotFound(Json.obj("error" -> "Not Found"))
+    	case 0 => NotFound(Json.obj("error" -> nf))
     	case _ => Ok(Json.obj("status"->s"Usunięto rodzaj ${id}"))
     }
   }
@@ -56,7 +57,7 @@ class GenreController @Inject()(messagesAction: MessagesActionBuilder, val repo:
     	},
     	genreData =>{
     		repo.modifyById(id, genreData).map{
-    			case 0 => NotFound(Json.obj("error" -> "Not Found"))
+    			case 0 => NotFound(Json.obj("error" -> nf))
     			case _ => Ok(Json.obj("status"->s"Zmodyfikowano rodzaj ${id}"))
 				}
 			}
@@ -92,7 +93,7 @@ Redirect(routes.GenreController.listWidget).flashing("info" -> "Genre added!")
   def getWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
     repo.getById(id).map{
       case None =>
-        Redirect(routes.GenreController.listWidget).flashing("error" -> "Not found!")
+        Redirect(routes.GenreController.listWidget).flashing("error" -> nf)
       case Some(genre) =>
         val genreData = GenreData(genre.name)
         Ok(views.html.GenreViewUpdate(id, form.fill(genreData)))
@@ -102,7 +103,7 @@ Redirect(routes.GenreController.listWidget).flashing("info" -> "Genre added!")
   def deleteWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
     repo.deleteById(id).map{
       case 0 =>
-        Redirect(routes.GenreController.listWidget).flashing("error" -> "Not found!")
+        Redirect(routes.GenreController.listWidget).flashing("error" -> nf)
       case _ =>
         Redirect(routes.GenreController.listWidget).flashing("info" -> "Genre deleted!")
     }

@@ -11,6 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UserController @Inject()(messagesAction: MessagesActionBuilder, val repo: UserRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
 
+val nf = "Not Found"
 
   def getAll = Action.async{
     repo.getAll().map { Users =>
@@ -20,7 +21,7 @@ class UserController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
   def getById(id: Long) = Action.async{
     repo.getById(id).map{ User =>
     if (User == None)
-    	NotFound(Json.obj("error" -> "Not Found"))
+    	NotFound(Json.obj("error" -> nf))
     else
     	Ok(Json.toJson(User))
   	}
@@ -28,7 +29,7 @@ class UserController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
   
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
-    	case 0 => NotFound(Json.obj("error" -> "Not Found"))
+    	case 0 => NotFound(Json.obj("error" -> nf))
     	case _ => Ok(Json.obj("status"->s"Usunięto reżysera ${id}"))
     }
   }
@@ -56,7 +57,7 @@ class UserController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
     	},
     	UserData =>{
     		repo.modifyById(id, UserData).map{
-    			case 0 => NotFound(Json.obj("error" -> "Not Found"))
+    			case 0 => NotFound(Json.obj("error" -> nf))
     			case _ => Ok(Json.obj("status"->s"Zmodyfikowano reżysera ${id}"))
 				}
 			}
@@ -109,7 +110,7 @@ Redirect(routes.UserController.listWidget).flashing("info" -> "User added!")
   def deleteWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
     repo.deleteById(id).map{
       case 0 =>
-        Redirect(routes.UserController.listWidget).flashing("error" -> "Not found!")
+        Redirect(routes.UserController.listWidget).flashing("error" -> nf)
       case _ =>
         Redirect(routes.UserController.listWidget).flashing("info" -> "User deleted!")
     }

@@ -11,6 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class FilmController @Inject()(messagesAction: MessagesActionBuilder, val repo: FilmRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
 
+val nf = "Not Found"
 
   def getAll = Action.async{
     repo.getAll().map { Films =>
@@ -20,7 +21,7 @@ class FilmController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
   def getById(id: Long) = Action.async{
     repo.getById(id).map{ Film =>
     if (Film == None)
-    	NotFound(Json.obj("error" -> "Not Found"))
+    	NotFound(Json.obj("error" -> nf))
     else
     	Ok(Json.toJson(Film))
   	}
@@ -28,7 +29,7 @@ class FilmController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
   
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
-    	case 0 => NotFound(Json.obj("error" -> "Not Found"))
+    	case 0 => NotFound(Json.obj("error" -> nf))
     	case _ => Ok(Json.obj("status"->s"Usunięto film ${id}"))
     }
   }
@@ -55,7 +56,7 @@ class FilmController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
     	},
     	filmData =>{
     		repo.modifyById(id, filmData).map{
-    			case 0 => NotFound(Json.obj("error" -> "Not Found"))
+    			case 0 => NotFound(Json.obj("error" -> nf))
     			case _ => Ok(Json.obj("status"->s"Zmodyfikowano film ${id}"))
 				}
 			}
@@ -93,7 +94,7 @@ class FilmController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
   def getWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
     repo.getById(id).map{
       case None =>
-        Redirect(routes.FilmController.listWidget).flashing("error" -> "Not found!")
+        Redirect(routes.FilmController.listWidget).flashing("error" -> nf)
       case Some(film) =>
         val filmData = FilmData(film.name, film.genre_id, film.director_id, film.actor_id)
         Ok(views.html.FilmViewUpdate(id, form.fill(filmData)))
@@ -103,7 +104,7 @@ class FilmController @Inject()(messagesAction: MessagesActionBuilder, val repo: 
   def deleteWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
     repo.deleteById(id).map{
       case 0 =>
-        Redirect(routes.FilmController.listWidget).flashing("error" -> "Not found!")
+        Redirect(routes.FilmController.listWidget).flashing("error" -> nf)
       case _ =>
         Redirect(routes.FilmController.listWidget).flashing("info" -> "Film deleted!")
     }

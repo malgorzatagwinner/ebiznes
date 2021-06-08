@@ -11,6 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PaymentController @Inject()(messagesAction: MessagesActionBuilder, val repo: PaymentRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
 
+val nf = "Not Found"
 
   def getAll = Action.async{
     repo.getAll().map { payments =>
@@ -20,7 +21,7 @@ class PaymentController @Inject()(messagesAction: MessagesActionBuilder, val rep
   def getById(id: Long) = Action.async{
     repo.getById(id).map{ payment =>
     if (payment == None)
-    	NotFound(Json.obj("error" -> "Not Found"))
+    	NotFound(Json.obj("error" -> nf))
     else
     	Ok(Json.toJson(payment))
   	}
@@ -28,7 +29,7 @@ class PaymentController @Inject()(messagesAction: MessagesActionBuilder, val rep
   
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
-    	case 0 => NotFound(Json.obj("error" -> "Not Found"))
+    	case 0 => NotFound(Json.obj("error" -> nf))
     	case _ => Ok(Json.obj("status"->s"Usunięto płatność ${id}"))
     }
   }
@@ -55,7 +56,7 @@ class PaymentController @Inject()(messagesAction: MessagesActionBuilder, val rep
     	},
     	paymentData =>{
     		repo.modifyById(id, paymentData).map{
-    			case 0 => NotFound(Json.obj("error" -> "Not Found"))
+    			case 0 => NotFound(Json.obj("error" -> nf))
     			case _ => Ok(Json.obj("status"->s"Zmodyfikowano płatność ${id}"))
 				}
 			}

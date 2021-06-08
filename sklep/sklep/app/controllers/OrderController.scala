@@ -11,6 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class OrderController @Inject()(messagesAction: MessagesActionBuilder, val repo: OrderRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController{
 
+val nf = "Not Found"
 
   def getAll = Action.async{
     repo.getAll().map { orders =>
@@ -20,7 +21,7 @@ class OrderController @Inject()(messagesAction: MessagesActionBuilder, val repo:
   def getById(id: Long) = Action.async{
     repo.getById(id).map{ order =>
     if (order == None)
-    	NotFound(Json.obj("error" -> "Not Found"))
+    	NotFound(Json.obj("error" -> nf))
     else
     	Ok(Json.toJson(order))
   	}
@@ -28,7 +29,7 @@ class OrderController @Inject()(messagesAction: MessagesActionBuilder, val repo:
   
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
-    	case 0 => NotFound(Json.obj("error" -> "Not Found"))
+    	case 0 => NotFound(Json.obj("error" -> nf))
     	case _ => Ok(Json.obj("status"->s"Usunięto zamowienie ${id}"))
     }
   }
@@ -55,7 +56,7 @@ class OrderController @Inject()(messagesAction: MessagesActionBuilder, val repo:
     	},
     	orderData =>{
     		repo.modifyById(id, orderData).map{
-    			case 0 => NotFound(Json.obj("error" -> "Not Found"))
+    			case 0 => NotFound(Json.obj("error" -> nf))
     			case _ => Ok(Json.obj("status"->s"Zmodyfikowano zamówienie ${id}"))
 				}
 			}
@@ -92,7 +93,7 @@ class OrderController @Inject()(messagesAction: MessagesActionBuilder, val repo:
   def getWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
     repo.getById(id).map{
       case None =>
-        Redirect(routes.OrderController.listWidget).flashing("error" -> "Not found!")
+        Redirect(routes.OrderController.listWidget).flashing("error" -> nf)
       case Some(order) =>
         val orderData = OrderData(order.user_id, order.payment_id)
         Ok(views.html.OrderViewUpdate(id, form.fill(orderData)))
@@ -102,7 +103,7 @@ class OrderController @Inject()(messagesAction: MessagesActionBuilder, val repo:
   def deleteWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
     repo.deleteById(id).map{
       case 0 =>
-        Redirect(routes.OrderController.listWidget).flashing("error" -> "Not found!")
+        Redirect(routes.OrderController.listWidget).flashing("error" -> nf)
       case _ =>
         Redirect(routes.OrderController.listWidget).flashing("info" -> "Order deleted!")
     }

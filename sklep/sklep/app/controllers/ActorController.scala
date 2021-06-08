@@ -11,6 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ActorController @Inject()(messagesAction: MessagesActionBuilder, val repo: ActorRepository, val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController {
 
+val nf = "Not Found"
 
   def getAll = Action.async{
     repo.getAll().map { actors =>
@@ -20,7 +21,7 @@ class ActorController @Inject()(messagesAction: MessagesActionBuilder, val repo:
   def getById(id: Long) = Action.async{
     repo.getById(id).map{ actor =>
     if (actor == None)
-    	NotFound(Json.obj("error" -> "Not Found"))
+    	NotFound(Json.obj("error" -> nf))
     else
     	Ok(Json.toJson(actor))
   	}
@@ -28,7 +29,7 @@ class ActorController @Inject()(messagesAction: MessagesActionBuilder, val repo:
   
   def deleteById(id: Long) = Action.async{
     repo.deleteById(id).map{
-    	case 0 => NotFound(Json.obj("error" -> "Not Found"))
+    	case 0 => NotFound(Json.obj("error" -> nf))
     	case _ => Ok(Json.obj("status"->s"Usunięto aktora ${id}"))
     }
   }
@@ -55,7 +56,7 @@ class ActorController @Inject()(messagesAction: MessagesActionBuilder, val repo:
     	},
     	actorData =>{
     		repo.modifyById(id, actorData).map{
-    			case 0 => NotFound(Json.obj("error" -> "Not Found"))
+    			case 0 => NotFound(Json.obj("error" -> nf))
     			case _ => Ok(Json.obj("status"->s"Zmodyfikowano aktora ${id}"))
 				}
 			}
@@ -90,7 +91,7 @@ class ActorController @Inject()(messagesAction: MessagesActionBuilder, val repo:
   def getWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
     repo.getById(id).map{
       case None =>
-        Redirect(routes.ActorController.listWidget).flashing("error" -> "Not found!")
+        Redirect(routes.ActorController.listWidget).flashing("error" -> nf)
       case Some(actor) =>
         val actorData = ActorData(actor.name)
         Ok(views.html.ActorViewUpdate(id, form.fill(actorData)))
@@ -100,7 +101,7 @@ class ActorController @Inject()(messagesAction: MessagesActionBuilder, val repo:
   def deleteWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
     repo.deleteById(id).map{
       case 0 =>
-        Redirect(routes.ActorController.listWidget).flashing("error" -> "Not found!")
+        Redirect(routes.ActorController.listWidget).flashing("error" -> nf)
       case _ =>
         Redirect(routes.ActorController.listWidget).flashing("info" -> "Actor deleted!")
     }
