@@ -117,7 +117,6 @@ val nf = "Not Found"
     }
 
     val successFunction = { data: OrderData =>
-      val widget = OrderData(user_id = data.user_id, payment_id = data.payment_id)
       repo.modifyById(id, data).map{ a=>
         Redirect(routes.OrderController.listWidget).flashing("info" -> "Order modified!")
       }

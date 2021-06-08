@@ -115,7 +115,6 @@ val nf = "Not Found"
     }
 
     val successFunction = { data: DirectorData =>
-      val widget = DirectorData(name = data.name)
       repo.modifyById(id, data).map{ a=>
         Redirect(routes.DirectorController.listWidget).flashing("info" -> "Director modified!")
       }

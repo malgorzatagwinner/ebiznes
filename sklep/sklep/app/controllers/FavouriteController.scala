@@ -117,7 +117,6 @@ val nf = "Not Found"
     }
 
     val successFunction = { data: FavouriteData =>
-      val widget = FavouriteData(film_id = data.film_id, user_id = data.user_id)
       repo.modifyById(id, data).map{ a=>
         Redirect(routes.FavouriteController.listWidget).flashing("info" -> "Favourite modified!")
       }

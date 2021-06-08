@@ -114,7 +114,6 @@ val nf = "Not Found"
     }
 
     val successFunction = { data: ShoppingBagData =>
-      val widget = ShoppingBagData(total_cost = data.total_cost, film_id = data.film_id)
       repo.modifyById(id, data).map{ a=>
         Redirect(routes.ShoppingBagController.listWidget).flashing("info" -> "ShoppingBag modified!")
       }

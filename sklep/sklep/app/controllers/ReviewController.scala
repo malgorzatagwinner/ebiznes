@@ -118,7 +118,6 @@ val nf = "Not Found"
     }
 
     val successFunction = { data: ReviewData =>
-      val widget = ReviewData(stars = data.stars, txt = data.txt, user_id = data.user_id, film_id = data.film_id)
       repo.modifyById(id, data).map{ a=>
         Redirect(routes.ReviewController.listWidget).flashing("info" -> "Review modified!")
       }

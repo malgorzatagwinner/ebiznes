@@ -117,7 +117,6 @@ Redirect(routes.GenreController.listWidget).flashing("info" -> "Genre added!")
     }
 
     val successFunction = { data: GenreData =>
-      val widget = GenreData(name = data.name)
       repo.modifyById(id, data).map{ a=>
         Redirect(routes.GenreController.listWidget).flashing("info" -> "Genre modified!")
       }

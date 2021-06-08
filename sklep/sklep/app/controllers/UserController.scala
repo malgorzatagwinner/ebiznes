@@ -124,7 +124,6 @@ Redirect(routes.UserController.listWidget).flashing("info" -> "User added!")
     }
 
     val successFunction = { data: UserData =>
-      val widget = UserData(email = data.email, password = data.password, surname = data.surname, name = data.name, address = data.address, zipcode = data.zipcode, city = data.city, country = data.country)
       repo.modifyById(id, data).map{ a=>
         Redirect(routes.UserController.listWidget).flashing("info" -> "User modified!")
       }
