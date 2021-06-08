@@ -7,8 +7,8 @@ async function getRequest(url, data, method='GET'){
 		},
 		method,
 		body: data ? JSON.stringify(data): undefined,});
-	const json = await result.json();
-	return json
+	return await result.json();
+	
 }
 
 export {getRequest}

@@ -3,10 +3,10 @@ import { useStore } from './ProductsContext';
 import { useUser } from './UserContext';
 
 export default () => {
-	const [store, storeDispatch] = useStore();
+	const [store, ] = useStore();
 	const { films, directors, genres, reviews } = store;
 
-	const[user, userDispatch] = useUser();
+	const[, userDispatch] = useUser();
 
 	const addtoBag = (id) => {
 		userDispatch({type: 'addFilmtoBag', film:id});

@@ -78,6 +78,7 @@ val nf = "Not Found"
     }
 
     val successFunction = { data: PaymentData =>
+    val widget = PaymentData(user_id = data.user_id, amount = data.amount)
       repo.create(widget).map{ payment => Redirect(routes.PaymentController.listWidget).flashing("info" -> "Payment added!")
       }
     }

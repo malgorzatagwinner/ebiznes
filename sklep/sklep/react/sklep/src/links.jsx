@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link, Route, Switch} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import ShoppingBag from './ShoppingBag';
 
 export default function(props){

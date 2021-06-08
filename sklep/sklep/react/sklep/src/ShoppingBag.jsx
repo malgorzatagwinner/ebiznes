@@ -3,8 +3,8 @@ import { useStore } from './ProductsContext';
 import { useUser } from './UserContext';
 
 export default () => {
-	const [store, storeDispatch] = useStore();
-	const { films, directors, genres, reviews } = store;
+	const [store, ] = useStore();
+	const { films} = store;
 
 	const[user, userDispatch] = useUser();
 	const { shoppingBag } = user;

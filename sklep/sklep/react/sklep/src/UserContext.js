@@ -1,7 +1,5 @@
-import React, {useState, useEffect} from "react";
-import {Link} from 'react-router-dom';
+import React from "react";
 import {getRequest} from "./utils";
-import {useHistory} from 'react-router';
 export const Context = React.createContext();
 
 const endpoint = 'http://localhost:9000/api';
