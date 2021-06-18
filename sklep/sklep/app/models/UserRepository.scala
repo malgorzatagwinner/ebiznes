@@ -5,20 +5,23 @@ import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import scala.concurrent.{ Future, ExecutionContext }
 import play.api.libs.json._
+import com.mohiva.play.silhouette.api.{Identity, LoginInfo}
+import com.mohiva.play.silhouette.api.services.IdentityService
+
 
 case class UserData(email: String, password: String, name: String, surname: String, address: String, zipcode: String, city: String, country: String)
 object UserData {
   implicit val userDataFormat = Json.format[UserData]
 }
 
-case class User(id: Long = 0L, email: String, password: String, name: String, surname: String, address: String, zipcode: String, city: String, country: String)
+case class User(id: Long = 0L, email: String, password: String, name: String, surname: String, address: String, zipcode: String, city: String, country: String, providerId: String, providerKey: String) extends Identity
 
 object User {
   implicit val userFormat = Json.format[User]
 }
 
 @Singleton
-class UserRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
+class UserRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) extends IdentityService[User]{
   val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -35,8 +38,11 @@ class UserRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(implic
     def zipcode = column[String]("zipcode")
     def city = column[String]("city")
     def country = column[String]("country")
+    def providerId = column[String]("providerId")
+    def providerKey = column[String]("providerKey")
 
-    def * = (id, email, password, surname, name, address, zipcode, city, country) <> ((User.apply _).tupled, User.unapply)
+
+    def * = (id, email, password, surname, name, address, zipcode, city, country, providerId, providerKey) <> ((User.apply _).tupled, User.unapply)
   }
 
   private val users = TableQuery[UsersTable]
@@ -48,7 +54,7 @@ class UserRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(implic
   def create(user: UserData): Future[User] = db.run {
     (users.map( u => (u.email, u.password, u.surname, u.name, u.address, u.zipcode, u.city, u.country))
       returning users.map(_.id)
-      into {case ((email, password, surname, name, address, zipcode, city, country), id) => User(id, email, password, surname, name, address, zipcode, city, country)}
+      into {case ((email, password, surname, name, address, zipcode, city, country), id) => User(id, email, password, surname, name, address, zipcode, city, country, "", "")}
     ) += ((user.email, user.password, user.surname, user.name, user.address, user.zipcode, user.city, user.country))
   }
 
@@ -64,4 +70,11 @@ class UserRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(implic
   def deleteById(id: Long): Future[Int] = db.run {
     users.filter(_.id === id).delete
   }
+  override def retrieve(loginInfo: LoginInfo): Future[Option[User]] = db.run{
+    users.filter(_.providerId === loginInfo.providerID)
+      .filter(_.providerKey === loginInfo.providerKey)
+      .result
+      .headOption
+  }
+
 }
