@@ -21,5 +21,7 @@ EXPOSE 9000
 
 # default for react (node)
 EXPOSE 3000
+run curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+apt-get install -y nodejs
 
 # vim: set expandtab ft=dockerfile:

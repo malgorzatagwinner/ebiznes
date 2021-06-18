@@ -6,3 +6,8 @@ target
 /.project
 /.settings
 /RUNNING_PID
+/.ivy2
+/.sbt
+/.cache
+/db.sqlite
+

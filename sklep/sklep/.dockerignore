@@ -1,0 +1,10 @@
+**/target
+.g8
+.ivy2
+.sbt
+.cache
+
+.dockerignore
+Dockerfile
+db.sqlite
+react
