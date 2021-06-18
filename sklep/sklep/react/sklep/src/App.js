@@ -1,5 +1,5 @@
 import './App.css';
-import {BrowserRouter, Route, Switch} from 'react-router-dom';
+import {HashRouter, Route, Switch} from 'react-router-dom';
 import {StoreProvider} from './ProductsContext'
 import {UserProvider} from './UserContext'
 import ProductList from './ProductList'
@@ -26,14 +26,14 @@ export default function App() {
     <div>
       <StoreProvider>
       <UserProvider>
-	<BrowserRouter>
+	<HashRouter>
 	  <Header/>
 	  <CustomSwitch>
 		  <Route path="/products" component={ProductList}/>
 		  <Route path="/favourites" component={FavouriteList}/>
 		  <Route path="/" component={Welcome}/>
 	  </CustomSwitch>
-	</BrowserRouter>
+	</HashRouter>
       </UserProvider>
       </StoreProvider>
       </div>

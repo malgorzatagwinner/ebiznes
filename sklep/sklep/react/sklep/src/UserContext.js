@@ -1,8 +1,7 @@
 import React from "react";
-import {getRequest} from "./utils";
+import {getRequest, endpoint} from "./utils";
 export const Context = React.createContext();
 
-const endpoint = 'http://localhost:9000/api';
 const states ={
 	favourites: {},
 	orders: {},

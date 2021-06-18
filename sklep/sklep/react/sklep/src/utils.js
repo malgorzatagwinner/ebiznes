@@ -11,4 +11,11 @@ async function getRequest(url, data, method='GET'){
 	
 }
 
-export {getRequest}
+const endpoint = (
+
+	window.location.hostname == "localhost" || window.location.hostname.startsWith('127.')
+	? 'http://localhost:9000/api'
+	: 'https://ebiznes--2021.azurewensites.net/api'
+
+);
+export {getRequest, endpoint}

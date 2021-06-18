@@ -1,9 +1,8 @@
 import React from "react";
 import {Link} from 'react-router-dom';
-import {getRequest} from "./utils";
+import {getRequest, endpoint} from "./utils";
 export const Context = React.createContext();
 
-const endpoint = 'http://localhost:9000/api';
 const states ={
 	films: {},
 	directors: {},
