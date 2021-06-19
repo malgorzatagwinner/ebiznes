@@ -16,7 +16,7 @@
 	}
 	@form(routes.FilmController.updateWidget(id)) {
 		<fieldset>
-			@CSRF.formField
+			@{/* @CSRF.formField  */}
 			@inputText(data("name"), Symbol("_label") -> "Name")
 			@inputText(data("genre"), Symbol("_label") -> "Genre")
 			@inputText(data("director"), Symbol("_label") -> "Director")

@@ -6,40 +6,44 @@ export default () => {
 	const [user, userDispatch] = useUser();
 	const { favourites} = user;
 	const [store, storeDispatch] = useStore();
-	const { films, directors, genres, reviews } = store;
+	const { films, directors, genres, reviews, actors } = store;
 
 	const addtoBag = (id) => {
 		userDispatch({type: 'addFilmtoBag', film:id});
 	}
 	
+	const deletefromFav = (id) => {
+		userDispatch({type: 'deleteFilmfromFav', film:id});
+	}
 	
-	return (<ul>
-		{
-			Object.values(favourites).map((favourite) => {
-			if(!favourite)
-				return;
-			const film = films[favourite.film_id]
-			return (
-			<li key={favourite.id}>
-				{
-						film.id
-					}. {
-						film.name
-					} by {
+	
+	return (<ul className="lista">
+                {
+                        Object.entries(favourites).map(([item, index]) => {
+				const film = films?.[item];
+			return	(
+                                <li key={ film.id }>
+                                        {
+                                                film.name 
+                                        } <br/> by {
 						directors?.[film.director_id]?.name || <i>directors #{film.director_id}</i>
-					} - {
-						genres?.[film.genre_id]?.name || <i>genre #{films.genre_id}</i>
+					} with {
+						actors?.[film.actor_id]?.name || <i> actors # {film.actor_id}</i>
+					
 					}
-					{
-						reviews?.[film.id]?.map((review)=>(
-						<i key={review.id}>{ review.txt} </i>
-						))
-					}
-						<a onClick={() => addtoBag(film.id)}>
-						Add to Shopping Bag
-						</a>
-			</li>
-			)})
-		}
-	</ul>);
+                                        <br/>
+					<a onClick={() => addtoBag(film.id)}>
+					Add to Shopping Bag
+					</a>
+					<br/>
+					<a onClick={() => deletefromFav(film.id)}>
+					Delete from favourites
+					</a>
+
+                                </li>
+                        )
+			})
+                }
+        </ul>);
+
 };

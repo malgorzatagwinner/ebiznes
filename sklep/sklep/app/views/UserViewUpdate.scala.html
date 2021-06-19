@@ -16,7 +16,7 @@
 	}
 	@form(routes.UserController.updateWidget(id)) {
 		<fieldset>
-			@CSRF.formField
+			@{/* @CSRF.formField  */}
 			@inputText(data("email"), Symbol("_label") -> "email")
 			@inputText(data("password"), Symbol("_label") -> "password")
 			@inputText(data("surname"), Symbol("_label") -> "surname")

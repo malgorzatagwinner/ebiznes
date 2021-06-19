@@ -34,7 +34,7 @@
     }
 
     @helper.form(postUrl) {
-      @helper.CSRF.formField
+      @{/* @helper.CSRF.formField  */}
 
       @helper.inputText(form("stars"))
       @helper.inputText(form("txt"))

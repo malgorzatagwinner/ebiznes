@@ -1,5 +1,5 @@
 package controllers
-
+import play.api.libs.json._
 import com.mohiva.play.silhouette.api.services.AuthenticatorResult
 import com.mohiva.play.silhouette.api.LoginInfo
 import models.User
@@ -13,7 +13,7 @@ abstract class AbstractAuthController(scc: DefaultSilhouetteControllerComponents
     authenticatorService.create(LoginInfo(user.providerId, user.providerKey))
       .flatMap { authenticator =>
         authenticatorService.init(authenticator).flatMap { v =>
-          authenticatorService.embed(v, Ok("Authenticated"))
+          authenticatorService.embed(v, Ok(Json.toJson(user)))
         }
       }
   }

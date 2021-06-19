@@ -1,4 +1,6 @@
 package controllers
+import play.api.libs.json._
+import play.api.libs.json.Json
 
 import com.mohiva.play.silhouette.api.actions.SecuredRequest
 import com.mohiva.play.silhouette.api.exceptions.ProviderException
@@ -30,13 +32,13 @@ class SignInController @Inject()(scc: DefaultSilhouetteControllerComponents, add
       }
     }.recover {
       case _: ProviderException =>
-        Forbidden("Wrong credentials")
+        Forbidden(Json.obj("error" ->"Wrong credentials"))
           .discardingCookies(DiscardingCookie(name = "PLAY_SESSION"))
     }
   })
 
   def signOut: Action[AnyContent] = securedAction.async { implicit request: SecuredRequest[EnvType, AnyContent] =>
-    authenticatorService.discard(request.authenticator, Ok("Logged out"))
+    authenticatorService.discard(request.authenticator, Ok(Json.obj("status"->s"Logged out")))
       .map(_.discardingCookies(
         DiscardingCookie(name = "csrfToken"),
         DiscardingCookie(name = "PLAY_SESSION"),

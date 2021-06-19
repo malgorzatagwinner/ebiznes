@@ -16,7 +16,7 @@
 	}
 	@form(routes.ActorController.updateWidget(id)) {
 		<fieldset>
-			@CSRF.formField
+			@{/* @CSRF.formField  */}
 			@inputText(data("name"), Symbol("_label") -> "Name")
     		  <button>Update Actor</button>
 		</fieldset>

@@ -6,22 +6,21 @@ export default () => {
 	const [store, ] = useStore();
 	const { films} = store;
 
-	const[user, userDispatch] = useUser();
-	const { shoppingBag } = user;
+	const[{shoppingBag}, userDispatch] = useUser();
 	
 	const deletefromBag = (id) => {
 		userDispatch({type: 'deleteFilmfromBag', film:id});
 	}
-	
-	return (<ul>
+	console.log(shoppingBag)	
+	return (<ul className="lista">
 		{
 			Object.entries(shoppingBag).map(([item, index]) => (
 				<li key={ item }>
 					{
 						films?.[item]?.name 
-					} {index}
+					} <br/>
 					<a onClick={() => deletefromBag(films?.[item]?.id)}>
-						Delete one item
+						End rent
 						</a>
 				</li>
 			))

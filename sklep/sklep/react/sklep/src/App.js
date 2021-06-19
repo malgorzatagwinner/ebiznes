@@ -5,7 +5,10 @@ import {UserProvider} from './UserContext'
 import ProductList from './ProductList'
 import Header from './links'
 import Welcome from './hello'
-import FavouriteList from './FavouriteList'
+import ShoppingBag from './ShoppingBag'
+import Favourite from './FavouriteList'
+import SignUp from './SignUp'
+import SignIn from './SignIn'
 
 const NotFound = () => (
 		<h1>Not Found</h1>
@@ -30,12 +33,18 @@ export default function App() {
 	  <Header/>
 	  <CustomSwitch>
 		  <Route path="/products" component={ProductList}/>
-		  <Route path="/favourites" component={FavouriteList}/>
+		  <Route path="/shoppingBag" component={ShoppingBag}/>
+		  <Route path="/favourite" component={Favourite}/>
+		  <Route path="/signUp" component={SignUp}/>
+		  <Route path="/signIn" component={SignIn}/>
 		  <Route path="/" component={Welcome}/>
 	  </CustomSwitch>
 	</HashRouter>
       </UserProvider>
       </StoreProvider>
+      </div>
+      <div className="footer">
+	Małgorzata Gwinner 2021	
       </div>
     </div>
   );

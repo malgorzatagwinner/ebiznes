@@ -16,7 +16,7 @@
 	}
 	@form(routes.OrderController.updateWidget(id)) {
 		<fieldset>
-			@CSRF.formField
+			@{/* @CSRF.formField  */}
 			@inputText(data("user_id"), Symbol("_label") -> "User_id")
 			@inputText(data("payment_id"), Symbol("_label") -> "Payment_id")
     		  <button>Update Order</button>

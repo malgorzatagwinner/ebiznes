@@ -19,11 +19,11 @@ class SignUpController @Inject()(components: DefaultSilhouetteControllerComponen
 
     userRepository.retrieve(loginInfo).flatMap {
       case Some(_) =>
-        Future.successful(Forbidden("User already exists"))
+        Future.successful(Forbidden(Json.obj("error"->"User already exists")))
       case None =>
         val authInfo = passwordHasherRegistry.current.hash(signUpRequest.password)
         userRepository.create(
-          UserData("","","","","","","","")
+          UserData(signUpRequest.email,"","","","","","","", CredentialsProvider.ID,signUpRequest.email)
         ).flatMap { user =>
           authInfoRepository.add(loginInfo, authInfo)
             .map(_ => user)

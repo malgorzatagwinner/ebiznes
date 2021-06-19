@@ -78,7 +78,7 @@ val nf = "Not Found"
     }
 
     val successFunction = { data: UserData =>
-      val widget = UserData(email = data.email, password = data.password, surname = data.surname, name = data.name, address = data.address, zipcode = data.zipcode, city = data.city, country = data.country)
+      val widget = UserData(email = data.email, password = data.password, surname = data.surname, name = data.name, address = data.address, zipcode = data.zipcode, city = data.city, country = data.country, providerId = data.providerId, providerKey = data.providerKey)
       repo.create(widget).map{ user =>
 Redirect(routes.UserController.listWidget).flashing("info" -> "User added!")
     }
@@ -94,7 +94,9 @@ Redirect(routes.UserController.listWidget).flashing("info" -> "User added!")
   			   "address" -> nonEmptyText,
   			   "zipcode" -> nonEmptyText,
   			   "city" -> nonEmptyText,
-  			   "country" -> nonEmptyText
+  			   "country" -> nonEmptyText,
+                           "providerId" -> nonEmptyText,
+                           "providerKey" -> nonEmptyText
   			)(UserData.apply)(UserData.unapply))
 
   def getWidget(id: Long) = messagesAction.async{ implicit request: MessagesRequest[AnyContent] =>
@@ -102,7 +104,7 @@ Redirect(routes.UserController.listWidget).flashing("info" -> "User added!")
       case None =>
         Redirect(routes.UserController.listWidget).flashing("error" -> "Not found!")
       case Some(user) =>
-        val userData = UserData(user.email, user.password, user.surname, user.name, user.address, user.zipcode, user.city, user.country)
+        val userData = UserData(user.email, user.password, user.surname, user.name, user.address, user.zipcode, user.city, user.country, user.providerId, user.providerKey)
         Ok(views.html.UserViewUpdate(id, form.fill(userData)))
     }
   }

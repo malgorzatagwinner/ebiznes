@@ -18,14 +18,14 @@ class SocialAuthController @Inject()(scc: DefaultSilhouetteControllerComponents,
           case Left(result) => Future.successful(result)
           case Right(authInfo) => for {
             profile <- p.retrieveProfile(authInfo)
-            _ <- userRepository.create(UserData("","","","","","","",""))
+            _ <- userRepository.create(UserData(profile.email.get,"","","","","","","",profile.loginInfo.providerID,profile.loginInfo.providerKey))
             _ <- authInfoRepository.save(profile.loginInfo, authInfo)
             authenticator <- authenticatorService.create(profile.loginInfo)
             value <- authenticatorService.init(authenticator)
-            result <- authenticatorService.embed(value, Redirect("http://localhost:3000"))
+            result <- authenticatorService.embed(value, Redirect("http://ebiznes-2021.azurewebsites.net/"))
           } yield {
             val Token(name, value) = CSRF.getToken.get
-            result.withCookies(Cookie(name, value, httpOnly = false))
+            result.withCookies(Cookie(name, value, httpOnly = false), Cookie("user", profile.email.get, httpOnly=false))
           }
         }
       case _ => Future.failed(new ProviderException(s"Cannot authenticate with unexpected social provider $provider"))

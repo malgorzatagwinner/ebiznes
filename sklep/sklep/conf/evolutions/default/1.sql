@@ -23,7 +23,9 @@ CREATE TABLE `Users`(
   `address` VARCHAR NOT NULL,
   `zipcode` VARCHAR NOT NULL,
   `city` VARCHAR NOT NULL,
-  `country` VARCHAR NOT NULL
+  `country` VARCHAR NOT NULL,
+  `providerId` VARCHAR NOT NULL,
+  `providerKey` VARCHAR NOT NULL
 );
 
 CREATE TABLE `Films`(
@@ -90,6 +92,25 @@ CREATE TABLE `Reviews`(
     REFERENCES `Films` (`id`) 
 );
 
+CREATE TABLE `oAuth2Info`(
+  `id` INTEGER PRIMARY KEY,
+  `providerId` VARCHAR NOT NULL,
+  `providerKey` VARCHAR NOT NULL,
+  `accessToken` VARCHAR NOT NULL,
+  `tokenType` VARCHAR,
+  `expiresIn` VARCHAR
+);
+
+CREATE TABLE `passwordInfo`(
+  `id` INTEGER PRIMARY KEY,
+  `providerId` VARCHAR NOT NULL,
+  `providerKey` VARCHAR NOT NULL,
+  `hasher` VARCHAR NOT NULL,
+  `password` VARCHAR NOT NULL,
+  `salt` VARCHAR
+);
+
+
 --!Downs
 
 DROP TABLE IF EXISTS `Directors`;
@@ -100,5 +121,7 @@ DROP TABLE IF EXISTS `Films`;
 DROP TABLE IF EXISTS `Favourites`;
 DROP TABLE IF EXISTS `Payments`;
 DROP TABLE IF EXISTS `Orders`;
-DROP TABLE IF EXISTS `ShoppingBag`;
+DROP TABLE IF EXISTS `ShoppingBags`;
 DROP TABLE IF EXISTS `Reviews`;
+DROP TABLE IF EXISTS `oAuth2Info`;
+DROP TABLE IF EXISTS `passwordInfo`;

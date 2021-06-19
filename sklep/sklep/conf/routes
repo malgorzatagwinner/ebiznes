@@ -117,3 +117,11 @@ POST   /user                        controllers.UserController.createWidget()
 POST   /user/$id<[1-9][0-9]*>      controllers.UserController.updateWidget(id: Long)
 GET   /user/$id<[1-9][0-9]*>      controllers.UserController.getWidget(id: Long)
 GET   /user/$id<[1-9][0-9]*>/delete      controllers.UserController.deleteWidget(id: Long)
+
+#Authentication
++ nocsrf
+POST        /api/signUp                                   controllers.SignUpController.signUp
++ nocsrf
+POST        /api/signIn                                   controllers.SignInController.signIn
+GET        /api/signOut                                  controllers.SignInController.signOut
+GET         /api/authenticate/:provider        controllers.SocialAuthController.authenticate(provider: String)

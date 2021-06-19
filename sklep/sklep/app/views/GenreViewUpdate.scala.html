@@ -16,7 +16,7 @@
 	}
 	@form(routes.GenreController.updateWidget(id)) {
 		<fieldset>
-			@CSRF.formField
+			@{/* @CSRF.formField  */}
 			@inputText(data("name"), Symbol("_label") -> "Name")
     		  <button>Update Genre</button>
 		</fieldset>

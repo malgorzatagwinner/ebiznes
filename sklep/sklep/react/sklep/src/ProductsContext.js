@@ -7,7 +7,8 @@ const states ={
 	films: {},
 	directors: {},
 	genre: {},
-	reviews: {}
+	reviews: {},
+	actors: {}
 };
 let loading = false;
 const reducer = (state, action) => {
@@ -27,6 +28,10 @@ const reducer = (state, action) => {
 		case 'setReviews':{
 			console.log('setReviews to ', action.data);
 			return {...state, reviews: action.data || {}};
+		}
+		case 'setActors':{
+			console.log('setActors to ', action.data);
+			return {...state, actors: action.data || {}};
 		}
 		default: {
 			throw new Error(`Unhandled action type: ${action.type}`)
@@ -65,6 +70,7 @@ export const StoreProvider = ({children}) => {
 				customDispatch({type: 'loadDirectors'});
 				customDispatch({type: 'loadGenres'});
 				customDispatch({type: 'loadReviews'});
+				customDispatch({type: 'loadActors'});
 				
 				return;
 			}
@@ -82,6 +88,10 @@ export const StoreProvider = ({children}) => {
 			}
 			case "loadReviews": {
 				loadToMap_Film(endpoint, 'review').then((data) => storeDispatch({type: 'setReviews', data}));
+				return;
+			}
+			case "loadActors": {
+				loadToMap(endpoint, 'actor').then((data) => storeDispatch({type: 'setActors', data}));
 				return;
 			}
 			default: {

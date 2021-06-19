@@ -9,7 +9,7 @@ import com.mohiva.play.silhouette.api.{Identity, LoginInfo}
 import com.mohiva.play.silhouette.api.services.IdentityService
 
 
-case class UserData(email: String, password: String, name: String, surname: String, address: String, zipcode: String, city: String, country: String)
+case class UserData(email: String, password: String, name: String, surname: String, address: String, zipcode: String, city: String, country: String, providerId: String, providerKey: String)
 object UserData {
   implicit val userDataFormat = Json.format[UserData]
 }
@@ -52,10 +52,10 @@ class UserRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(implic
   }
 
   def create(user: UserData): Future[User] = db.run {
-    (users.map( u => (u.email, u.password, u.surname, u.name, u.address, u.zipcode, u.city, u.country))
+    (users.map( u => (u.email, u.password, u.surname, u.name, u.address, u.zipcode, u.city, u.country, u.providerId, u.providerKey))
       returning users.map(_.id)
-      into {case ((email, password, surname, name, address, zipcode, city, country), id) => User(id, email, password, surname, name, address, zipcode, city, country, "", "")}
-    ) += ((user.email, user.password, user.surname, user.name, user.address, user.zipcode, user.city, user.country))
+      into {case ((email, password, surname, name, address, zipcode, city, country, providerId, providerKey), id) => User(id, email, password, surname, name, address, zipcode, city, country, providerId, providerKey)}
+    ) += ((user.email, user.password, user.surname, user.name, user.address, user.zipcode, user.city, user.country, user.providerId, user.providerKey))
   }
 
   def getById(id: Long): Future[Option[User]] = db.run {
@@ -63,7 +63,7 @@ class UserRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(implic
   }
 
   def modifyById(id: Long, user: UserData): Future[Int] = db.run {
-    users.filter(_.id === id).map(u => (u.email, u.password, u.surname, u.name, u.address, u.zipcode, u.city, u.country) <> ((UserData.apply _).tupled, UserData.unapply)).update(user)
+    users.filter(_.id === id).map(u => (u.email, u.password, u.surname, u.name, u.address, u.zipcode, u.city, u.country, u.providerId, u.providerKey) <> ((UserData.apply _).tupled, UserData.unapply)).update(user)
 
   }
 

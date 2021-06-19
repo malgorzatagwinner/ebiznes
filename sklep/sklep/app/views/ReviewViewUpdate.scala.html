@@ -16,7 +16,7 @@
 	}
 	@form(routes.ReviewController.updateWidget(id)) {
 		<fieldset>
-			@CSRF.formField
+			@{/* @CSRF.formField  */}
 			@inputText(data("stars"), Symbol("_label") -> "Stars")
 			@inputText(data("txt"), Symbol("_label") -> "txt")
 			@inputText(data("user_id"), Symbol("_label") -> "user_id")

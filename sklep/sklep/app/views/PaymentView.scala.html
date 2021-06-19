@@ -32,7 +32,7 @@
     }
 
     @helper.form(postUrl) {
-      @helper.CSRF.formField
+      @{/* @helper.CSRF.formField  */}
 
       @helper.inputText(form("user_id"))
       @helper.inputText(form("amount"))
