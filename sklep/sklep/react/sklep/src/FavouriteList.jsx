@@ -6,7 +6,7 @@ export default () => {
 	const [user, userDispatch] = useUser();
 	const { favourites} = user;
 	const [store, storeDispatch] = useStore();
-	const { films, directors, genres, reviews, actors } = store;
+	const { films, directors, actors } = store;
 
 	const addtoBag = (id) => {
 		userDispatch({type: 'addFilmtoBag', film:id});

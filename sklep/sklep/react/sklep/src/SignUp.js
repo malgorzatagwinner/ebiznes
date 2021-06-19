@@ -1,14 +1,12 @@
-import {React, useState, useEffect} from "react";
+import {React, useState} from "react";
 import { Formik, Field, Form, ErrorMessage } from 'formik';
-import { Link} from 'react-router-dom';
-import {getRequest} from "./utils";
 import {useHistory} from 'react-router';
 import {useUser} from './UserContext';
 import { GoogleLoginButton, GithubLoginButton } from "react-social-login-buttons";
 
 
 export default () => {
-	const [user, setUser] = useState({email:'', password:''})
+	const [user] = useState({email:'', password:''})
 	const history = useHistory();
 
 	const [,userDispatch] = useUser();
@@ -22,8 +20,8 @@ export default () => {
        initialValues={user}
        enableReinitialize={true}
 
-       onSubmit={async (user) => {
-	userDispatch({type: 'signUp', user}).then(()=>{	
+       onSubmit={async (u) => {
+	userDispatch({type: 'signUp', u}).then(()=>{	
 	       history.push("/signIn")
 	})
 	.catch((e) =>{

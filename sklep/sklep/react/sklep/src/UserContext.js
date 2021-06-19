@@ -94,8 +94,6 @@ export const UserProvider = ({children}) => {
 				customDispatch({type: 'loadFavourites'});
 				customDispatch({type: 'loadOrders'});
 				customDispatch({type: 'loadPayments'});
-			//	customDispatch({type: 'loadShoppingBag'});
-				
 				return;
 			}
 			case "loadFavourites": {
@@ -123,7 +121,6 @@ export const UserProvider = ({children}) => {
 						throw {error: data.message || 'error'}
 					}
 				});
-				
 			}
 			case "signIn": {
 				return getRequest(endpoint+'/signIn', action.user, 'POST').then((data) => {
@@ -135,7 +132,6 @@ export const UserProvider = ({children}) => {
 					}
 					userDispatch({type: 'setUser', data});
 				});
-				
 			}
 			case "signOut": {
 				return getRequest(endpoint+'/signOut').then((data) => {
@@ -147,7 +143,6 @@ export const UserProvider = ({children}) => {
 						throw {error: data.message || 'error'}
 					}
 				});
-				
 			}
 			default: {
 				userDispatch(action);
